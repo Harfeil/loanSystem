@@ -1,0 +1,249 @@
+/* Register Css */
+body {
+  height: auto;
+  margin-left: 1px;
+  margin-top: 1px;
+  margin-right: 1px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.title {
+  font-size: 28px;
+  color: royalblue;
+  font-weight: 600;
+  letter-spacing: -1px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+}
+
+.title::before,
+.title::after {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  left: 0px;
+  background-color: royalblue;
+}
+
+.title::before {
+  width: 18px;
+  height: 18px;
+  background-color: royalblue;
+}
+
+.title::after {
+  width: 18px;
+  height: 18px;
+  animation: pulse 1s linear infinite;
+}
+
+.message,
+.signin {
+  color: rgba(88, 87, 87, 0.822);
+  font-size: 14px;
+}
+
+.signin {
+  text-align: center;
+}
+
+.signin a {
+  color: royalblue;
+}
+
+.signin a:hover {
+  text-decoration: underline royalblue;
+}
+
+.flex {
+  display: flex;
+  width: 100%;
+  gap: 30px;
+}
+
+.form label {
+  position: relative;
+}
+
+.form label .input {
+  width: 100%;
+  padding: 10px 10px 20px 10px;
+  outline: 0;
+  border: 1px solid rgba(105, 105, 105, 0.397);
+  border-radius: 10px;
+}
+
+.form label .input + span {
+  position: absolute;
+  left: 10px;
+  top: 15px;
+  color: grey;
+  font-size: 0.9em;
+  cursor: text;
+  transition: 0.3s ease;
+}
+
+.form label .input:placeholder-shown + span {
+  top: 15px;
+  font-size: 0.9em;
+}
+
+.form label .input:focus + span,
+.form label .input:valid + span {
+  top: 30px;
+  font-size: 0.7em;
+  font-weight: 600;
+}
+
+.form label .input:valid + span {
+  color: green;
+}
+
+.submit {
+  border: none;
+  outline: none;
+  background-color: royalblue;
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  transform: 0.3s ease;
+}
+
+.submit:hover {
+  background-color: rgb(56, 90, 194);
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.birthdayInput {
+  height: 35px;
+  width: 416px;
+  border-radius: 5px;
+  border-color: lightgray;
+}
+
+#cardsWarn,
+#comNumWarn {
+  padding-left: 5px;
+  font-size: 12px;
+  color: rebeccapurple;
+}
+
+.mainDash {
+  background-color: white;
+  display: flex;
+  width: 100%;
+}
+.sideBar {
+  width: 300px;
+  height: 1vh;
+  border: 1px solid lightgray;
+}
+.links a {
+  text-decoration: none;
+  color: black;
+}
+.content {
+  width: 100%;
+  padding-left: 50px;
+  overflow-y: auto;
+  height: 880px;
+  overflow-x: hidden;
+}
+.detailContainer {
+  height: 500px;
+  width: 800px;
+}
+.popup-details {
+  height: 750px;
+  width: 800px;
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  z-index: 9999;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.fullNameDisplay,
+.genderAgeDisplay {
+  display: flex;
+  width: 500px;
+}
+
+.bankDetailContainer,
+.companyDetailContainer,
+.proofBillIdContainer {
+  width: 700px;
+  display: flex;
+}
+.firstName,
+.gender {
+  width: 100px;
+}
+.lastName,
+.age {
+  width: 100px;
+  float: left;
+  margin-left: 40px;
+}
+.birthday,
+.age,
+.email {
+  margin-left: 80px;
+}
+#bankDetailDisplay,
+#personalDetail,
+#companyDetails {
+  font-style: italic;
+  font-size: 12px;
+}
+.bankName {
+  width: 200px;
+}
+.proof_bill,
+.proof_id,
+.proof_coe {
+  border: 1px solid lightgray;
+  height: 300px;
+  width: 345px;
+  margin-bottom: 10px;
+}
+.idContainer {
+  margin-left: 40px;
+}
+.birthday {
+  width: 200px;
+}
+.email {
+  width: 50px;
+}
