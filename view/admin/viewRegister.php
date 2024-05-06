@@ -1,41 +1,46 @@
 <?php 
 
-    include_once "../model/user_model.php";
+    // include_once "../../model/user_model.php";
+    include_once "../../controller/db_connector.php";
 
-    $register = new Register();
-    include_once "template/sidebar.php";
+    $db = new Database();
+    include_once "../template/sidebar.php";
 
 ?>
+        <link rel="stylesheet" href="../../model/loan.css">
         </div>
         
 
         <div class = "content">
-            <table class="table">
+            <h1>List of Accounts</h1>
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                    <th scope="col">#</th>
                     <th scope="col">First Name</th>
                     <th scope="col">Last Name</th>
                     <th scope="col">Age</th>
                     <th scope="col">Email</th>
+                    <th scope="col">Account Type</th>
+                    <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                 
                     <?php 
                     
-                        $tableUser = "user_tbl";
-                        $allUsers = $register->getUsers($tableUser);
+                        $sql = "SELECT * FROM user_tbl ORDER BY id DESC";
+                        $allUsers = $db->retrieve($sql);
 
                         if($allUsers){
                             while($row = mysqli_fetch_assoc($allUsers)){
                                 ?>
                                     <tr data-userId = <?=$row["id"]?> data-fname = <?=$row["fname"]?> data-lname = <?=$row["lname"]?> data-gender = <?=$row["gender"]?> data-birthday = <?=$row["birthday"]?> data-age = <?=$row["age"]?> data-email = <?=$row["email"]?> data-bankName = <?=$row["bank_name"]?> data-bankNumber = <?=$row["bank_number"]?> data-holderName = <?=$row["holder_name"]?> data-tinNum = <?=$row["tin_num"]?> data-comName = <?=$row["com_name"]?> data-comAdd = <?=$row["com_address"]?> data-comNum = <?=$row["com_num"]?> data-position = <?=$row["position"]?> data-earning = <?=$row["earning"]?> data-proofBill = <?=$row["proof_bill"]?> data-proofId = <?=$row["proof_id"]?> data-proofCoe = <?=$row["proof_coe"]?> class = "showDetailsBtn">
-                                        <td><?=$row["id"]?></td>
                                         <td><?=$row["fname"]?></td>
                                         <td><?=$row["lname"]?></td>
                                         <td><?=$row["age"]?></td>
                                         <td><?=$row["email"]?></td>
+                                        <td><?=$row["account_type"]?></td>
+                                        <td><?=$row["status"]?></td>
                                     </tr>
                                 <?php 
                             }
@@ -49,7 +54,10 @@
             <div id="popupForm" class="popup-details">
             
                 <div class = "firstRow">
+                    <img id = "closeImage" src="../../model/upload/close.png" alt="" width = "30px" height = "30px">
+
                     <p id = "personalDetail">PERSONAL DETAILS</p>
+                    
                     <div class ="fullNameDisplay">
                         <div class = "firstName">
                             <h6>FIRST NAME</h6>
@@ -223,6 +231,14 @@
                     form.style.display = "block";
                 });
             });
+         });
+
+         let imgBtn = document.getElementById("closeImage");
+
+         imgBtn.addEventListener("click", function(){
+            let form = document.getElementById("popupForm");
+
+            form.style.display = "None";
          });
     </script>
 </body>

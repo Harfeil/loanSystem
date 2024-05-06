@@ -1,6 +1,6 @@
 <?php 
 
-    include_once "template/sidebar.php";
+    include_once "../template/sidebar.php";
 
 ?>
 

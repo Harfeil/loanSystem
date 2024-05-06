@@ -1,9 +1,24 @@
 /* Register Css */
+* {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
 body {
   height: auto;
   margin-left: 1px;
   margin-top: 1px;
   margin-right: 1px;
+  overflow-x: hidden;
+  background: #ee9ca7; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #ffdde1,
+    #ee9ca7
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #ffdde1,
+    #ee9ca7
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 .form {
   display: flex;
@@ -11,14 +26,16 @@ body {
   gap: 10px;
   max-width: 400px;
   background-color: #fff;
-  padding: 20px;
+  padding-right: 60px;
+  padding-left: 40px;
   border-radius: 20px;
   position: relative;
+  margin: 0 auto;
 }
 
 .title {
   font-size: 28px;
-  color: royalblue;
+  color: rgb(76, 119, 228);
   font-weight: 600;
   letter-spacing: -1px;
   position: relative;
@@ -26,7 +43,9 @@ body {
   align-items: center;
   padding-left: 30px;
 }
-
+#errorDisplayRegister {
+  color: red;
+}
 .title::before,
 .title::after {
   position: absolute;
@@ -124,7 +143,7 @@ body {
 }
 
 .submit:hover {
-  background-color: rgb(56, 90, 194);
+  background-color: rgb(18, 18, 19);
 }
 
 @keyframes pulse {
@@ -154,24 +173,40 @@ body {
 }
 
 .mainDash {
-  background-color: white;
+  background-color: rgb(243, 234, 239);
   display: flex;
   width: 100%;
 }
 .sideBar {
   width: 300px;
-  height: 1vh;
-  border: 1px solid lightgray;
+  height: 887px;
+  border: 1px solid rgb(14, 13, 13);
+  background: #ee9ca7; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #ffdde1,
+    #ee9ca7
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #ffdde1,
+    #ee9ca7
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.links {
+  width: 350px;
 }
 .links a {
   text-decoration: none;
   color: black;
+  border: none;
 }
 .content {
+  padding-top: 30px;
   width: 100%;
   padding-left: 50px;
   overflow-y: auto;
-  height: 880px;
+  height: 886px;
   overflow-x: hidden;
 }
 .detailContainer {
@@ -186,10 +221,10 @@ body {
   top: 50%;
   left: 55%;
   transform: translate(-50%, -50%);
-  background: #fff;
+  background: #f7eff3;
   padding: 20px;
   border: 1px solid #ccc;
-  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  box-shadow: rgb(214, 222, 231) 0px 20px 30px -10px;
   z-index: 9999;
   overflow-y: auto;
   overflow-x: hidden;
@@ -246,4 +281,39 @@ body {
 }
 .email {
   width: 50px;
+}
+#accountTypeDropdown {
+  width: 420px;
+  height: 45px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
+}
+.goLinks {
+  font-size: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.active {
+  background-color: lightgray;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+#linkColor img {
+  fill: rgb(10, 10, 10);
+}
+.table {
+  margin-top: 20px;
+}
+.proofBill,
+.proofId,
+.proofCoe {
+  border: 1px solid lightgray;
+  height: 30px;
+  padding-top: 10px;
+  padding-left: 10px;
+  width: 410px;
+  border-radius: 10px;
+}
+#closeImage {
+  transform: translate(700px);
 }

@@ -13,6 +13,7 @@
 
         public function addUser($data, $file){
 
+            $accountType = $_POST["accountType"];
             $fname = $_POST["fname"];
             $lname = $_POST["lname"];
             $address = $_POST["Address"];
@@ -36,8 +37,9 @@
             $proofCoe = $file["proofCoe"]["name"];
             $coe_temp = $file["proofCoe"]["tmp_name"];
             $password = $_POST["password"];
+            $status = "Pending";
 
-            $upload_dir = "../model/upload/";
+            $upload_dir = "../../model/upload/";
 
             $div = explode('.', $proofBill);
             $file_ext = strtolower(end($div));
@@ -62,14 +64,13 @@
 
             $cpassword = $_POST["cpassword"];
             $role = "User";
-            $accountType = "Basic";
             $is_blocked = "0";
             $is_valid = "0";
 
             move_uploaded_file($bill_temp, $upload_dir . $proofBill);
             move_uploaded_file($id_temp, $upload_dir . $proofId);
             move_uploaded_file($coe_temp, $upload_dir . $proofCoe);
-            $sql = "INSERT INTO user_tbl (fname, lname, gender,birthday, age, email, bank_name, bank_number, holder_name, tin_num, com_name, com_address, com_num, position, earning, proof_bill, proof_id, proof_coe, password, role, account_type, is_blocked, is_valid) VALUES ('$fname', '$lname', '$gender', '$birthday', '$age', '$email', '$bankName', '$bankAccNum', '$holderName', '$tinNum', '$comName', '$comAddress', '$comNum',  '$position', '$earning', '$upload_bill', '$upload_ID', '$upload_Coe', '$password', '$role', '$accountType', '$is_blocked', '$is_valid')";
+            $sql = "INSERT INTO user_tbl (fname, lname, gender,birthday, age, email, bank_name, bank_number, holder_name, tin_num, com_name, com_address, com_num, position, earning, proof_bill, proof_id, proof_coe, password, role, account_type, is_blocked, is_valid, status) VALUES ('$fname', '$lname', '$gender', '$birthday', '$age', '$email', '$bankName', '$bankAccNum', '$holderName', '$tinNum', '$comName', '$comAddress', '$comNum',  '$position', '$earning', '$upload_bill', '$upload_ID', '$upload_Coe', '$password', '$role', '$accountType', '$is_blocked', '$is_valid', '$status')";
 
 
             $result = $this->db->insert($sql);
@@ -78,7 +79,7 @@
 
         public function getUsers($tableName){
 
-            $sql = "SELECT * FROM $tableName";
+            $sql = "SELECT * FROM $tableName ORDER BY id DESC";
             $result = $this->db->retrieve($sql);
             return $result;
 

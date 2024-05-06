@@ -1,17 +1,40 @@
+<?php 
+
+    session_start();
+
+    $errorMessage = "";
+
+    if(isset($_SESSION["error"])){
+        $errorMessage = $_SESSION["error"];
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../model/newstyles.css">
+    <link rel="stylesheet" href="../model/loan.css">
     <title>Document</title>
 </head>
 <body>
 
     <form class="form" action = "../controller/registration.php" method = "post" enctype = "multipart/form-data">
+        
+        <p id = "errorDisplayRegister"><?php echo $errorMessage ?></p>
         <p class="title">Register </p>
         <p class="message">Signup now and get full access to our app. </p>
+
+            <label>
+                <label for="">Account Type</label>
+                <select name="accountType" id="accountTypeDropdown">
+                    <option value="Basic">Basic</option>
+                    <option value="Premium">Premium</option>
+                </select>
+            </label>
             <div class="flex">
+
             <label>
                 <input required="" placeholder="" type="text" class="input" name = "fname">
                 <span>Firstname</span>
@@ -102,14 +125,16 @@
                 <span>Monthly Earnings</span>
             </label>
 
+            
             <label for="">Upload Proof of Billing</label>
-            <input required="" placeholder="" type="file" class="input" name = "proofBill">
+            <input required="" placeholder="" type="file" class="input proofBill" name = "proofBill">
+            
 
             <label for="">Upload Valid ID Primary</label>
-            <input required="" placeholder="" type="file" class="input" name = "proofId">
+            <input required="" placeholder="" type="file" class="input proofId" name = "proofId">
 
             <label for="">Upload COE(Certificate Of Employment)</label>
-            <input required="" placeholder="" type="file" class="input" name = "proofCoe">
+            <input required="" placeholder="" type="file" class="input proofCoe" name = "proofCoe">
 
         <label>
             <input required="" placeholder="" type="password" class="input" name = "password">
@@ -119,7 +144,7 @@
             <input required="" placeholder="" type="password" class="input" name = "cpassword">
             <span>Confirm password</span>
         </label>
-        <button class="submit">Submit</button>
+        <button class="submit" name = "addBtn">Submit</button>
         <p class="signin">Already have an acount ? <a href="#">Signin</a> </p>
     </form>
 
