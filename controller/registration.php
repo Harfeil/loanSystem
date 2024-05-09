@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION["error"] = $errorMessage;
                     // header("Location: ../view/register.php");
                     exit(); 
-                }{
+                }else{
                     $errorMessage = "Registered Successfully";
                     $_SESSION["error"] = $errorMessage;
                     $registerUser = $register->addUser($_POST, $_FILES);
