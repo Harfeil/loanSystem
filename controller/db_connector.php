@@ -34,6 +34,15 @@ class Database {
         }
     }
 
+    public function update($sql) {
+        $result = mysqli_query($this->link, $sql) or die (mysqli_error($this->link) . __LINE__);
+        if ($result) {
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
     public function retrieve($sql) {
         $result = mysqli_query($this->link, $sql) or die (mysqli_error($this->link) . __LINE__);
         if (mysqli_num_rows($result) > 0) {

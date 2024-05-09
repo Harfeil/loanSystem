@@ -7,7 +7,6 @@
     include_once "../template/sidebar.php";
 
 ?>
-        <link rel="stylesheet" href="../../model/loan.css">
         </div>
         
 
@@ -155,8 +154,8 @@
                     </div>
 
                     <div class = "buttonContainer">
-                        <button type="button" class="btn btn-outline-primary">Accept</button>
-                        <button type="button" class="btn btn-outline-danger">Decline</button>
+                        <button type="button" class="btn btn-outline-primary" id = "acceptBtn">Accept</button>
+                        <button type="button" class="btn btn-outline-danger" id = "declineBtn">Decline</button>
                     </div>
                 </div>
 
@@ -165,10 +164,34 @@
         </div>
     </div>
     <script>
+
+        let acceptBtn = document.getElementById("acceptBtn");
+
+        acceptBtn.addEventListener("click", function(){
+            let id = this.getAttribute('data-id');
+                    
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "../../controller/registration.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        location.reload();
+                    } else {
+                        console.error('There was a problem with the request.');
+                    }
+                }
+            };
+            
+            xhr.send("status=Active&&userId="+id);
+        });
+
          document.addEventListener('DOMContentLoaded', function(){
             let showBtn =  document.querySelectorAll('.showDetailsBtn');
             showBtn.forEach(function(row) {
                 row.addEventListener('click', function() {
+                    let accptBtn = document.getElementById("acceptBtn");
                     let form = document.getElementById("popupForm");
                     let user_id = this.getAttribute('data-userId');
                     let fname = this.getAttribute('data-fname');
@@ -210,6 +233,7 @@
                     let proof_idImg = document.getElementById("proof_id");
                     let proof_coeImg = document.getElementById("proof_coe");
 
+                    accptBtn.setAttribute("data-id", user_id);
                     fnameInput.textContent = fname;
                     lnameInput.textContent = lname;
                     genderInput.textContent = gender;

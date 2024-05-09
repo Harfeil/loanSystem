@@ -13,6 +13,7 @@ $errorMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+
     if (isset($_POST["addBtn"])) {
 
         $sql = "SELECT COUNT(*) AS numRegistrations FROM user_tbl";
@@ -51,12 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 echo $basicAcc;
 
-                if ($basicAcc === 50 && $_POST["accountType"] === "Basic") {
-                    $errorMessage = "Basic Account has reached the limit";
-                        $_SESSION["error"] = $errorMessage;
-                        // header("Location: ../view/register.php");
-                    exit(); 
-                } else if ($premAcc === 50 && $_POST["accountType"] === "Premium") {
+                if ($premAcc === 50 && $_POST["accountType"] === "Premium") {
                     $errorMessage = "Premium Account has reached the limit";
                     $_SESSION["error"] = $errorMessage;
                     // header("Location: ../view/register.php");
@@ -73,6 +69,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
         }
+    }
+
+    if(isset($_POST['status'])){
+        $id = $_POST["userId"];
+
+        $registerUser = $register->updateStatus($_POST, $id);
+    }
+
+    if(isset($_POST['submitAmount'])){
+
+        $registerUser = $register->addLoan($_POST);
     }
 }
 ?>

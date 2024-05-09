@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../model/loanfinalcss.css">
+    <link rel="stylesheet" href="../../model/newloancss.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Document</title>
 </head>
@@ -14,9 +14,8 @@
 
             <ul class="list-group links">
                 <li class="goLinks"><a id = "linkColor" href=""> <img id = "linkColor" height = "30px" width = "30px" src="../../model/upload/dashboard.png" alt=""> Dashboard</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/loan.png" alt=""> <a href="">Loans</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/users.png" alt=""> <a href="">Users</a></li>
+                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/loan.png" alt=""> <a href="../../view/users/loanPage.php">Loan</a></li>
                 <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/save.png" alt=""><a href=""> Savings</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/withdraw.png" alt=""> <a href="">Withdrawals</a></li>
+                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/notification.png" alt=""> <a href="">Notifications</a></li>
                 <li class="goLinks"><a href=""><img height = "30px" width = "30px" src="../../model/upload/profile.png" alt=""> Profile</a></li>
             </ul>

@@ -38,6 +38,8 @@
             $coe_temp = $file["proofCoe"]["tmp_name"];
             $password = $_POST["password"];
             $status = "Pending";
+            
+            $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
 
             $upload_dir = "../../model/upload/";
 
@@ -70,7 +72,7 @@
             move_uploaded_file($bill_temp, $upload_dir . $proofBill);
             move_uploaded_file($id_temp, $upload_dir . $proofId);
             move_uploaded_file($coe_temp, $upload_dir . $proofCoe);
-            $sql = "INSERT INTO user_tbl (fname, lname, gender,birthday, age, email, bank_name, bank_number, holder_name, tin_num, com_name, com_address, com_num, position, earning, proof_bill, proof_id, proof_coe, password, role, account_type, is_blocked, is_valid, status) VALUES ('$fname', '$lname', '$gender', '$birthday', '$age', '$email', '$bankName', '$bankAccNum', '$holderName', '$tinNum', '$comName', '$comAddress', '$comNum',  '$position', '$earning', '$upload_bill', '$upload_ID', '$upload_Coe', '$password', '$role', '$accountType', '$is_blocked', '$is_valid', '$status')";
+            $sql = "INSERT INTO user_tbl (fname, lname, gender,birthday, age, email, bank_name, bank_number, holder_name, tin_num, com_name, com_address, com_num, position, earning, proof_bill, proof_id, proof_coe, password, role, account_type, is_blocked, is_valid, status) VALUES ('$fname', '$lname', '$gender', '$birthday', '$age', '$email', '$bankName', '$bankAccNum', '$holderName', '$tinNum', '$comName', '$comAddress', '$comNum',  '$position', '$earning', '$upload_bill', '$upload_ID', '$upload_Coe', '$hashedpassword', '$role', '$accountType', '$is_blocked', '$is_valid', '$status')";
 
 
             $result = $this->db->insert($sql);
@@ -92,6 +94,50 @@
             return $result;
         }
 
+        public function updateStatus($data){
+
+            $status = $_POST["status"];
+            $id = $_POST["userId"];
+
+
+            $sql = "UPDATE user_tbl SET status = '$status' WHERE id = '$id'";
+            $result = $this->db->insert($sql);
+        }
+
+        public function addDaysToCurrentDate($daysToAdd) {
+            $currentDate = new DateTime();
+            $futureDate = clone $currentDate;
+
+            $futureDate->modify("+$daysToAdd days");
+
+            return $futureDate;
+        }
+        
+        public function addLoan($data) {
+            // Define addDaysToCurrentDate function as an anonymous function
+            $addDaysToCurrentDate = function ($daysToAdd) {
+                $currentDate = new DateTime();
+                $futureDate = clone $currentDate;
+                $futureDate->modify("+$daysToAdd days");
+                return $futureDate;
+            };
+
+            $money = $_POST["numberOfAmount"];
+            $totalAmount = intval($money);
+            $id = $_SESSION["user_id"];
+            $percentage = "0.03";
+            $floatValue = floatval($percentage);
+            $totalInterest = $totalAmount * $floatValue;
+            $currentDate = date("Y-m-d");
+
+            // Use the addDaysToCurrentDate function directly
+            $futureDateObject = $addDaysToCurrentDate(28);
+            $deadline = $futureDateObject->format('Y-m-d');
+
+            $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline, user_id, status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$deadline', '$id', 'Pending')";
+            
+            $result = $this->db->insert($sql);
+        }
 
 
     }
