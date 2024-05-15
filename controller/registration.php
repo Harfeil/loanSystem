@@ -33,24 +33,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sqlAccType = "SELECT account_type FROM user_tbl";
                 $resultAccType = $db->retrieve($sqlAccType);
-
-                $basicAcc = 0;
+                
                 $premAcc = 0;
 
                 if ($resultAccType->num_rows > 0) {
 
                     while ($rowAccType = $resultAccType->fetch_assoc()) {
-                        if ($rowAccType["account_type"] === "Basic") {
-                            $basicAcc++;
-                        }
-
                         if ($rowAccType["account_type"] === "Premium") {
                             $premAcc++;
                         }
                     }
 
                 }
-                echo $basicAcc;
 
                 if ($premAcc === 50 && $_POST["accountType"] === "Premium") {
                     $errorMessage = "Premium Account has reached the limit";

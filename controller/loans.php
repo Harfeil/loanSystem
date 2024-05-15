@@ -3,14 +3,15 @@
     session_start();
 
     
-    include_once "../model/loan_model.php";
+    include_once "../model/user_model.php";
 
-    $loan = new Loan();
+    $loan = new Register();
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
-        if(isset($_POST["amount"])){
-            $addLoan = $loan->addLoan($_POST);
+        if(isset($_POST["confirmLoan"])){
+            $type = "Loan";
+            $transaction = $loan->transaction($_POST, $type);
         }
     }
 ?>

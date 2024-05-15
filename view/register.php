@@ -15,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../model/myloancss.css">
+    <link rel="stylesheet" href="../model/mycss.css">
     <title>Document</title>
 </head>
 <body>
@@ -61,11 +61,11 @@
 
         <label>
             <label for="">Birthday</label>
-            <input required="" placeholder="" type="date" class = "birthdayInput" name = "birthday">
+            <input required="" placeholder="" type="date" class = "birthdayInput" id = "birthdayInput" name = "birthday">
         </label>
 
          <label>
-            <input required="" placeholder="" type="text" class="input" name = "age">
+            <input required="" placeholder="" type="text" id = "age_input" class="input" name = "age">
             <span>Age</span>
         </label>
 
@@ -148,5 +148,28 @@
         <p class="signin">Already have an acount ? <a href="#">Signin</a> </p>
     </form>
 
+    <script>
+
+        function calculateAge(birthdate) {
+            const today = new Date();
+            const birthDate = new Date(birthdate);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            return age;
+        }
+
+        // Event listener to update the age when the birthdate input changes
+        document.getElementById('birthdayInput').addEventListener('input', function() {
+            const birthdate = this.value;
+            const age = calculateAge(birthdate);
+            document.getElementById('age_input').value = age;
+        });
+
+    </script>
 </body>
 </html>

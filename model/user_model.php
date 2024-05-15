@@ -139,6 +139,21 @@
             $result = $this->db->insert($sql);
         }
 
+        
+
+        public function transaction($data, $type){
+            
+            $type_trans = $type;
+            $loan_id = $_POST["id_display"];
+            $status = "Not Paid";
+            $currentDate = date("Y-m-d");
+
+            $sql = "INSERT INTO transaction_table (t_type, loan_id, status) VALUES ('$type_trans', '$loan_id', '$status')";
+            
+            $result = $this->db->update($sql);
+
+        }
+
 
     }
 
