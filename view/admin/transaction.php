@@ -3,8 +3,10 @@
     include_once "../template/sidebar.php";
 
     include_once "../../controller/db_connector.php";
+    include_once "../../model/user_model.php";
 
-    $db = new Database();
+    $getTransact = new Register();
+
 
 ?>
     </div>
@@ -27,29 +29,26 @@
                     </thead>
                     <tbody>
                         <?php 
-                        $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birth, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_money as money, loan_tbl.deadline as deadline, loan_tbl.with_interest as interest, loan_tbl.loan_id as loan_id, transaction_table.t_type as type, transaction_table.date as date, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id";
-                        $transactions = $db->retrieve($sql);
+                            $transactions = $getTransact->getTransaction();
 
-                        if ($transactions && mysqli_num_rows($transactions) > 0) {
-                            while ($row = mysqli_fetch_assoc($transactions)) {
-                                ?>
-                                <tr class="showDetailsBtn">
-                                    <td><?=$row["fname"]." " . $row["lname"]?></td>
-                                    <td><?=$row["type"]?></td>
-                                    <td><?=$row["money"] + $row["interest"]?></td>
-                                    <td><?=$row["date"]?></td>
-                                    <td><?=$row["status"]?></td>
-                                </tr>
-                                <?php 
+                            $tableDisplay = [];
+
+                            foreach ($transactions as $trans){
+                                $tableDisplay[] = "
+                                    <tr>
+                                        <td>{$trans['fullname']}</td>
+                                        <td>{$trans['type']}</td>
+                                        <td>{$trans['total_payment']}</td>
+                                        <td>{$trans['date']}</td>
+                                        <td>{$trans['status']}</td>
+                                    </tr>";
                             }
-                        } else {
-                            ?>
-                            <tr class="showDetailsBtn">
-                                <td colspan="6" id = "noLoanfound">No Transaction Yet.</td>
-                            </tr>
-                            <?php 
-                        }
+
+                            $tableContent = implode("\n", $tableDisplay);
+
                         ?>
+
+                        <?php echo $tableContent; ?>
                     </tbody>
                 </table>
             </div>

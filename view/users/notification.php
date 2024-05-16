@@ -3,8 +3,9 @@
     include_once "../template/sidebarUser.php";
 
     include_once "../../controller/db_connector.php";
+    include_once "../../model/user_model.php";
 
-    $db = new Database();
+    $getNotif = new Register();
 
 ?>
     </div>
@@ -26,30 +27,24 @@
                         </thead>
                         <tbody>
                             <?php 
-                            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY transaction_table.t_id DESC";
-                            $allUsers = $db->retrieve($sql);
 
-                            $totalInterest = 0;
+                                $allNotif = $getNotif->getNotif();
 
-                            if ($allUsers && mysqli_num_rows($allUsers) > 0) {
-                                while ($row = mysqli_fetch_assoc($allUsers)) {
-                                    ?>
-                                    <tr class="showDetailsBtn">
-                                        <td><?=$row["type"]?></td>
-                                        <td><?=$row["money"] + $row["interest"]?></td>
-                                        <td><?=$row["deadline"]?></td>
-                                        <td><?=$row["status"]?></td>
-                                    </tr>
-                                    <?php 
+                                $tableDisplay = [];
+
+                                foreach ($allNotif as $notifs){
+                                    $tableDisplay[] = "
+                                        <tr>
+                                            <td>{$notifs['type']}</td>
+                                            <td>{$notifs['total_payment']}</td>
+                                            <td>{$notifs['deadline']}</td>
+                                            <td>{$notifs['status']}</td>
+                                        </tr>";
                                 }
-                            } else {
-                                ?>
-                                <tr class="showDetailsBtn">
-                                    <td colspan="4" id = "noLoanfound">No loans found.</td>
-                                </tr>
-                                <?php 
-                            }
+
+                                $tableContent = implode("\n", $tableDisplay);
                             ?>
+                             <?php echo $tableContent; ?>
                         </tbody>
                     </table>
                 </div>

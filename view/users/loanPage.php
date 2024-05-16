@@ -2,9 +2,11 @@
 
     include_once "../template/sidebarUser.php";
 
-    include_once "../../controller/db_connector.php";
+    include_once "../../model/user_model.php";
+    
+    require_once "../../controller/db_connector.php";
 
-    $db = new Database();
+    $allLoan = new Register();
 
 ?>
     </div>
@@ -28,31 +30,25 @@
                 </thead>
                 <tbody>
                     <?php 
-                    $sql = "SELECT CONCAT(user_tbl.fname, ' ', user_tbl.lname) as fullname, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
-                    $allUsers = $db->retrieve($sql);
+                    $allLoans = $allLoan->getLoans();
+                    $tableDisplay = [];
 
-                    $totalInterest = 0;
-
-                    if ($allUsers && mysqli_num_rows($allUsers) > 0) {
-                        while ($row = mysqli_fetch_assoc($allUsers)) {
-                            ?>
-                            <tr class="showDetailsBtn">
-                                <td><?=$row["fullname"]?></td>
-                                <td><?=$row["loan_money"]?></td>
-                                <td><?=$row["loan_money"] + $row["interest"]?></td>
-                                <td><?=$row["loan_date"]?></td>
-                                <td><?=$row["status"]?></td>
-                            </tr>
-                            <?php 
-                        }
-                    } else {
-                        ?>
-                        <tr class="showDetailsBtn">
-                            <td colspan="4" id = "noLoanfound">No loans found.</td>
-                        </tr>
-                        <?php 
+                    foreach ($allLoans as $loans){
+                        $tableDisplay[] = "
+                            <tr>
+                                <td>{$loans['fullname']}</td>
+                                <td>{$loans['loan_money']}</td>
+                                <td>{$loans['total_payment']}</td>
+                                <td>{$loans['deadline']}</td>
+                                <td>{$loans['status']}</td>
+                            </tr>";
                     }
+
+                    $tableContent = implode("\n", $tableDisplay);
+
                     ?>
+
+                    <?php echo $tableContent; ?>
                 </tbody>
             </table>
         </div>
@@ -112,7 +108,14 @@
 
                 <h6>ENTER LOAN AMOUNT</h6>
                 <form action="../../controller/registration.php" method = "POST" enctype = "multipart/form-data">
-                    <input type="text" id="inputNumberLoan" placeholder="Enter loan amount 5000 - 10000" name = "numberOfAmount">
+                    <input type="text" id="inputNumberLoan" placeholder="Enter loan amount 5000 - 10000" name = "numberOfAmount"><br><br>
+                    <label for="">Set Due Date</label>
+                    <select name="month_select" id="month_select">
+                        <option value="1">1 Month</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">12 Months</option>
+                    </select>
                     <p id = "errorLoanDisplay"></p><br><br><br>
                     <button type="submit" name = "submitAmount"  class = "btn btn-primary" id = "submitLoanAmount">Submit</button>
                 </form>

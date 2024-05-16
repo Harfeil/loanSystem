@@ -1,8 +1,5 @@
 <?php
 
-
-    require_once "../controller/db_connector.php";
-
     class Register{
 
         public $db;
@@ -78,13 +75,91 @@
             $result = $this->db->insert($sql);
 
         }
-
-        public function getUsers($tableName){
-
-            $sql = "SELECT * FROM $tableName ORDER BY id DESC";
+        
+        
+        public function getUsers() {
+            $sql = "SELECT * FROM user_tbl ORDER BY id DESC";
             $result = $this->db->retrieve($sql);
-            return $result;
 
+            $usersData = [];
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $usersData[] = [
+                        'id' => $row["id"],
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birthday' => $row["birthday"],
+                        'age' => $row["age"],
+                        'email' => $row["email"],
+                        'bank_name' => $row["bank_name"],
+                        'bank_number' => $row["bank_number"],
+                        'holder_name' => $row["holder_name"],
+                        'tin_num' => $row["tin_num"],
+                        'com_name' => $row["com_name"],
+                        'com_address' => $row["com_address"],
+                        'com_num' => $row["com_num"],
+                        'position' => $row["position"],
+                        'earning' => $row["earning"],
+                        'proof_bill' => $row["proof_bill"],
+                        'proof_id' => $row["proof_id"],
+                        'proof_coe' => $row["proof_coe"],
+                        'account_type' => $row["account_type"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $usersData = "No user found";
+            }
+
+            return $usersData;
+        }
+
+        public function getLoans(){
+            $sql = "SELECT CONCAT(user_tbl.fname, ' ', user_tbl.lname) as fullname, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $totalPayment = $row["interest"] + $row["loan_money"];
+                    $loanData[] = [
+                        'fullname' => $row["fullname"],
+                        'loan_money' => $row["loan_money"],
+                        'total_payment' => $totalPayment,
+                        'deadline' => $row["deadline"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $loanData = "No Loans Found";
+            }
+
+            return $loanData;
+        }
+
+        public function getNotif(){
+            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY transaction_table.t_id DESC";
+
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $totalPayment = $row["money"] - $row["interest"];
+                    $notifications[] = [
+                        'trans_id' => $row["trans_id"],
+                        'type' => $row["type"],
+                        'status' => $row["status"],
+                        'money' => $row["money"],
+                        'total_payment' => $totalPayment,
+                        'interest' => $row["interest"],
+                        'deadline' => $row["deadline"]
+                    ];
+                }
+            }else{
+                $notifications = "No Loans Found";
+            }
+
+            return $notifications;
         }
 
         public function getUsersWithWhere($tableName,$columnName, $userId){
@@ -122,6 +197,9 @@
                 return $futureDate;
             };
 
+            $num_months = $_POST["month_select"];
+            $total_months = intval($num_months) * 28;
+
             $money = $_POST["numberOfAmount"];
             $totalAmount = intval($money);
             $id = $_SESSION["user_id"];
@@ -131,7 +209,7 @@
             $currentDate = date("Y-m-d");
 
             // Use the addDaysToCurrentDate function directly
-            $futureDateObject = $addDaysToCurrentDate(28);
+            $futureDateObject = $addDaysToCurrentDate($total_months);
             $deadline = $futureDateObject->format('Y-m-d');
 
             $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline, user_id, status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$deadline', '$id', 'Pending')";
@@ -152,6 +230,73 @@
             
             $result = $this->db->update($sql);
 
+        }
+
+        public function getListLoan(){
+            $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $fullname = $row["fname"] . " " . $row["lname"];
+                    $totalPayment = $row["loan_money"] - $row["interest"];
+                    $loanlist[] = [
+                        'total_payment' => $totalPayment,
+                        'full_name' => $fullname,
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birthday' => $row["birthday"],
+                        'age' => $row["age"],
+                        'email' => $row["email"],
+                        'bank_number' => $row["bank_number"],
+                        'bank_name' => $row["bank_name"],
+                        'holder' => $row["holder"],
+                        'loan_id' => $row["loan_id"],
+                        'loan_money' => $row["loan_money"],
+                        'loan_date' => $row["loan_date"],
+                        'deadline' => $row["deadline"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $loanlist = "No Loans Found";
+            }
+
+            return $loanlist;
+        }
+
+        public function getTransaction(){
+            $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birth, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_money as money, loan_tbl.deadline as deadline, loan_tbl.with_interest as interest, loan_tbl.loan_id as loan_id, transaction_table.t_type as type, transaction_table.date as date, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $totalPayment = $row["interest"] + $row["money"];
+                    $fullname  = $row["fname"] . " " . $row["lname"];
+                    $transaction[] = [
+                        'total_payment' => $totalPayment,
+                        'fullname' => $fullname,
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birth' => $row["birth"],
+                        'age' =>  $row["age"],
+                        'bank_name' => $row["bank_name"],
+                        'money' => $row["money"],
+                        'deadline' => $row["deadline"],
+                        'interest' => $row["interest"],
+                        'loan_id' => $row["loan_id"],
+                        'type' => $row["type"],
+                        'date' => $row["date"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $transaction = "No Transaction Found";
+            }
+            
+            return $transaction;
         }
 
 

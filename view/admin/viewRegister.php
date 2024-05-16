@@ -4,6 +4,9 @@
     include_once "../../controller/db_connector.php";
 
     $db = new Database();
+    include_once "../../model/user_model.php";
+
+    $getUsers = new Register();
     include_once "../template/sidebar.php";
 
 ?>
@@ -27,25 +30,27 @@
                 
                     <?php 
                     
-                        $sql = "SELECT * FROM user_tbl ORDER BY id DESC";
-                        $allUsers = $db->retrieve($sql);
+                        $allUsers = $getUsers->getUsers();
 
-                        if($allUsers){
-                            while($row = mysqli_fetch_assoc($allUsers)){
-                                ?>
-                                    <tr data-userId = <?=$row["id"]?> data-fname = <?=$row["fname"]?> data-lname = <?=$row["lname"]?> data-gender = <?=$row["gender"]?> data-birthday = <?=$row["birthday"]?> data-age = <?=$row["age"]?> data-email = <?=$row["email"]?> data-bankName = <?=$row["bank_name"]?> data-bankNumber = <?=$row["bank_number"]?> data-holderName = <?=$row["holder_name"]?> data-tinNum = <?=$row["tin_num"]?> data-comName = <?=$row["com_name"]?> data-comAdd = <?=$row["com_address"]?> data-comNum = <?=$row["com_num"]?> data-position = <?=$row["position"]?> data-earning = <?=$row["earning"]?> data-proofBill = <?=$row["proof_bill"]?> data-proofId = <?=$row["proof_id"]?> data-proofCoe = <?=$row["proof_coe"]?> class = "showDetailsBtn">
-                                        <td><?=$row["fname"]?></td>
-                                        <td><?=$row["lname"]?></td>
-                                        <td><?=$row["age"]?></td>
-                                        <td><?=$row["email"]?></td>
-                                        <td><?=$row["account_type"]?></td>
-                                        <td><?=$row["status"]?></td>
-                                    </tr>
-                                <?php 
-                            }
+                        $tableDisplay = [];
+
+                        foreach ($allUsers as $user) {
+                            $tableDisplay[] = "
+                                <tr data-userId='{$user['id']}' data-fname='{$user['fname']}' data-lname='{$user['lname']}' data-gender='{$user['gender']}' data-birthday='{$user['birthday']}' data-age='{$user['age']}' data-email='{$user['email']}' data-bankName='{$user['bank_name']}' data-bankNumber='{$user['bank_number']}' data-holderName='{$user['holder_name']}' data-tinNum='{$user['tin_num']}' data-comName='{$user['com_name']}' data-comAdd='{$user['com_address']}' data-comNum='{$user['com_num']}' data-position='{$user['position']}' data-earning='{$user['earning']}' data-proofBill='{$user['proof_bill']}' data-proofId='{$user['proof_id']}' data-proofCoe='{$user['proof_coe']}' class='showDetailsBtn'>
+                                    <td>{$user['fname']}</td>
+                                    <td>{$user['lname']}</td>
+                                    <td>{$user['age']}</td>
+                                    <td>{$user['email']}</td>
+                                    <td>{$user['account_type']}</td>
+                                    <td>{$user['status']}</td>
+                                </tr>";
                         }
 
+                        $tableContent = implode("\n", $tableDisplay);
+
                     ?>
+
+                    <?php echo $tableContent; ?>
 
                 </tbody>
             </table>

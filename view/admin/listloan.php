@@ -4,6 +4,11 @@
     $db = new Database();
 
     include_once "../template/sidebar.php";
+    
+    include_once "../../model/user_model.php";
+
+    $getListLoan = new Register();
+    
 
 ?>
 
@@ -19,7 +24,7 @@
                         <th scope="col">Loan Amount</th>
                         <th scope="col">Loan Date</th>
                         <th scope="col">Total Payment</th>
-                        <th scope="col">Deadline</th>
+                        <th scope="col">Due Date</th>
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
                     </tr>
@@ -28,26 +33,42 @@
                 
                     <?php 
                     
-                        $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_number as bank_number, user_tbl.holder_name as holder, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
-                        $allUsers = $db->retrieve($sql);
+                        $allListLoan = $getListLoan->getListLoan();
 
-                        if($allUsers){
-                            while($row = mysqli_fetch_assoc($allUsers)){
-                                ?>
-                                    <tr class = "showDetailsBtn">
-                                        <td><?=$row["fname"] . " " . $row["lname"]?></td>
-                                        <td><?=$row["loan_money"]?></td>
-                                        <td><?=$row["loan_date"]?></td>
-                                        <td><?=$row["loan_money"] + $row["interest"]?></td>
-                                        <td><?=$row["deadline"]?></td>
-                                        <td><?=$row["status"]?></td>
-                                        <td><button data-fname = <?=$row["fname"]?> data-lname = <?=$row["lname"]?> data-gender = <?=$row["gender"]?>  data-birthday = <?=$row["birthday"]?> data-age = <?=$row["age"]?> data-email = <?=$row["email"]?> data-bank_name = <?=$row["bank_number"]?> data-holder = <?=$row["holder"]?> data-loan_money = <?=$row["loan_money"]?> data-bank_number = <?=$row["bank_number"]?>   data-loan_id = <?=$row["loan_id"]?> type="button" class="btn btn-outline-info show_btn">Show Details</button></td>
-                                    </tr>
-                                <?php 
+                        $tableDisplay = [];
+
+                            foreach ($allListLoan as $listLoan){
+                                $tableDisplay[] = "
+                                    <tr>
+                                        <td>{$listLoan['full_name']}</td>
+                                        <td>{$listLoan['loan_money']}</td>
+                                        <td>{$listLoan['loan_date']}</td>
+                                        <td>{$listLoan['total_payment']}</td>
+                                        <td>{$listLoan['deadline']}</td>
+                                        <td>{$listLoan['status']}</td>
+                                        <td><button 
+                                            type='button' 
+                                            class='btn btn-outline-primary show_btn'
+                                            data-fname='{$listLoan['fname']}'
+                                            data-lname='{$listLoan['lname']}'
+                                            data-gender='{$listLoan['gender']}'
+                                            data-birthday='{$listLoan['birthday']}'
+                                            data-age='{$listLoan['age']}'
+                                            data-email='{$listLoan['email']}'
+                                            data-bank_name='{$listLoan['bank_name']}'
+                                            data-holder='{$listLoan['holder']}'
+                                            data-loan_money='{$listLoan['loan_money']}'
+                                            data-bank_number='{$listLoan['bank_number']}'
+                                            data-loan_id='{$listLoan['loan_id']}'
+                                        >Show Details</button></td>
+                                    </tr>";
                             }
-                        }
 
-                    ?>
+                            $tableContent = implode("\n", $tableDisplay);
+
+                        ?>
+
+                        <?php echo $tableContent; ?>
 
                 </tbody>
             </table>

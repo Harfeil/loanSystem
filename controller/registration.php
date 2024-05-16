@@ -23,39 +23,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $row = $result->fetch_assoc();
             $numOfRegistration = $row["numRegistrations"];
 
-            if ($numOfRegistration >= 100) {
 
-                $sqlAccType = "SELECT account_type FROM user_tbl";
-                $resultAccType = $db->retrieve($sqlAccType);
-                
-                $premAcc = 0;
+            $sqlAccType = "SELECT account_type FROM user_tbl";
+            $resultAccType = $db->retrieve($sqlAccType);
+            
+            $premAcc = 0;
 
-                if ($resultAccType->num_rows > 0) {
+            if ($resultAccType->num_rows > 0) {
 
-                    while ($rowAccType = $resultAccType->fetch_assoc()) {
-                        if ($rowAccType["account_type"] === "Premium") {
-                            $premAcc++;
-                        }
+                while ($rowAccType = $resultAccType->fetch_assoc()) {
+                    if ($rowAccType["account_type"] === "Premium") {
+                        $premAcc++;
                     }
-
                 }
-
-                if ($premAcc === 50 && $_POST["accountType"] === "Premium") {
-                    $errorMessage = "Premium Account has reached the limit";
-                    $_SESSION["error"] = $errorMessage;
-                    header("Location: ../view/register.php");
-                    exit(); 
-                }else{
-                    $errorMessage = "Registered Successfully";
-                    $_SESSION["error"] = $errorMessage;
-                    $registerUser = $register->addUser($_POST, $_FILES);
-                    header("Location: ../view/register.php");
-                    exit();
-                }
-
-                echo $errorMessage;
 
             }
+
+            if ($premAcc === 50 && $_POST["accountType"] === "Premium") {
+                $errorMessage = "Premium Account has reached the limit";
+                $_SESSION["error"] = $errorMessage;
+                header("Location: ../view/register.php");
+                exit(); 
+            }else{
+                $errorMessage = "Registered Successfully";
+                $_SESSION["error"] = $errorMessage;
+                $registerUser = $register->addUser($_POST, $_FILES);
+                header("Location: ../view/register.php");
+                exit();
+            }
+
+            echo $errorMessage;
+
+            
         }
     }
 
