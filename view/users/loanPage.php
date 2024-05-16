@@ -21,9 +21,8 @@
                     <tr>
                         <th scope="col">Full Name</th>
                         <th scope="col">Loan Amount</th>
-                        <th scope="col">Loan Date</th>
                         <th scope="col">Total Payment</th>
-                        <th scope="col">Deadline</th>
+                        <th scope="col">Loan Date</th>
                         <th scope="col">Status</th>
                     </tr>
                 </thead>
@@ -40,9 +39,8 @@
                             <tr class="showDetailsBtn">
                                 <td><?=$row["fullname"]?></td>
                                 <td><?=$row["loan_money"]?></td>
-                                <td><?=$row["loan_date"]?></td>
                                 <td><?=$row["loan_money"] + $row["interest"]?></td>
-                                <td><?=$row["deadline"]?></td>
+                                <td><?=$row["loan_date"]?></td>
                                 <td><?=$row["status"]?></td>
                             </tr>
                             <?php 
