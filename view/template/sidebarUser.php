@@ -13,9 +13,9 @@
             <h1>Loan System</h1><br><br>
 
             <ul class="list-group links">
-                <li class="goLinks"><a id = "linkColor" href=""> <img id = "linkColor" height = "30px" width = "30px" src="../../model/upload/dashboard.png" alt=""> Dashboard</a></li>
+                <li class="goLinks"><a id = "linkColor" href="../users/dashboard.php"> <img id = "linkColor" height = "30px" width = "30px" src="../../model/upload/dashboard.png" alt=""> Dashboard</a></li>
                 <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/loan.png" alt=""> <a href="../../view/users/loanPage.php">Loan</a></li>
                 <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/save.png" alt=""><a href=""> Savings</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/notification.png" alt=""> <a href="">Notifications</a></li>
+                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/notification.png" alt=""> <a href="../users/notification.php">Notifications</a></li>
                 <li class="goLinks"><a href=""><img height = "30px" width = "30px" src="../../model/upload/profile.png" alt=""> Profile</a></li>
             </ul>

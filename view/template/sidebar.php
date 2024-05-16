@@ -13,10 +13,10 @@
             <h1>Loan System</h1><br><br>
 
             <ul class="list-group links">
-                <li class="goLinks"><a id = "linkColor" href=""> <img id = "linkColor" height = "30px" width = "30px" src="../../model/upload/dashboard.png" alt=""> Dashboard</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/loan.png" alt=""> <a href="">Loans</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/users.png" alt=""> <a href="">Users</a></li>
+                <li class="goLinks"><a id = "linkColor" href="../admin/dashboard.php"> <img id = "linkColor" height = "30px" width = "30px" src="../../model/upload/dashboard.png" alt=""> Dashboard</a></li>
+                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/loan.png" alt=""> <a href="../admin/listloan.php">Loans</a></li>
+                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/users.png" alt=""> <a href="../admin/viewRegister.php">Users</a></li>
                 <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/withdraw.png" alt=""> <a href="">Withdrawals</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/withdraw.png" alt=""> <a href="">Transaction</a></li>
+                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/transactionIcon.png" alt=""> <a href="../admin/transaction.php">Transaction</a></li>
                 <li class="goLinks"><a href=""><img height = "30px" width = "30px" src="../../model/upload/profile.png" alt=""> Profile</a></li>
             </ul>

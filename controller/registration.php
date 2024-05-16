@@ -25,12 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($numOfRegistration >= 100) {
 
-                $errorMessage = "Max limit has been reached";
-                $_SESSION["error"] = $errorMessage;
-                header("Location: ../view/register.php");
-                exit(); // Terminate script execution after redirect
-            } else {
-
                 $sqlAccType = "SELECT account_type FROM user_tbl";
                 $resultAccType = $db->retrieve($sqlAccType);
                 
@@ -49,13 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($premAcc === 50 && $_POST["accountType"] === "Premium") {
                     $errorMessage = "Premium Account has reached the limit";
                     $_SESSION["error"] = $errorMessage;
-                    // header("Location: ../view/register.php");
+                    header("Location: ../view/register.php");
                     exit(); 
                 }else{
                     $errorMessage = "Registered Successfully";
                     $_SESSION["error"] = $errorMessage;
                     $registerUser = $register->addUser($_POST, $_FILES);
-                    // header("Location: ../view/register.php");
+                    header("Location: ../view/register.php");
                     exit();
                 }
 
