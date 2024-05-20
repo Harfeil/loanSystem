@@ -2,6 +2,10 @@
 
     session_start();
 
+    include_once "db_connector.php";
+
+    $db = new Database();
+
     
     include_once "../model/user_model.php";
 

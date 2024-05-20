@@ -23,7 +23,6 @@
                     <tr>
                         <th scope="col">Full Name</th>
                         <th scope="col">Loan Amount</th>
-                        <th scope="col">Total Payment</th>
                         <th scope="col">Loan Date</th>
                         <th scope="col">Status</th>
                     </tr>
@@ -38,8 +37,7 @@
                             <tr>
                                 <td>{$loans['fullname']}</td>
                                 <td>{$loans['loan_money']}</td>
-                                <td>{$loans['total_payment']}</td>
-                                <td>{$loans['deadline']}</td>
+                                <td>{$loans['loan_date']}</td>
                                 <td>{$loans['status']}</td>
                             </tr>";
                     }

@@ -2,12 +2,12 @@
     include_once "../../controller/db_connector.php";
 
     $db = new Database();
-
-    include_once "../template/sidebar.php";
     
     include_once "../../model/user_model.php";
 
     $getListLoan = new Register();
+
+    include_once "../template/sidebar.php";
     
 
 ?>
@@ -23,8 +23,6 @@
                         <th scope="col">Full Name</th>
                         <th scope="col">Loan Amount</th>
                         <th scope="col">Loan Date</th>
-                        <th scope="col">Total Payment</th>
-                        <th scope="col">Due Date</th>
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
                     </tr>
@@ -43,12 +41,12 @@
                                         <td>{$listLoan['full_name']}</td>
                                         <td>{$listLoan['loan_money']}</td>
                                         <td>{$listLoan['loan_date']}</td>
-                                        <td>{$listLoan['total_payment']}</td>
-                                        <td>{$listLoan['deadline']}</td>
                                         <td>{$listLoan['status']}</td>
                                         <td><button 
                                             type='button' 
                                             class='btn btn-outline-primary show_btn'
+                                            data-deadline='{$listLoan['deadline']}'
+                                            data-interest='{$listLoan['interest']}'
                                             data-fname='{$listLoan['fname']}'
                                             data-lname='{$listLoan['lname']}'
                                             data-gender='{$listLoan['gender']}'
@@ -131,6 +129,8 @@
                     <p id = "display_money">Loan Money</p>
 
                     <form action="../../controller/loans.php" method = "POST">
+                        <input type="text" id = "interest_display" name = "interest" hidden>
+                        <input type="text" id = "date_display" name = "date_deadline" hidden>
                         <input type="text" id = "id_display" name = "id_display" hidden>
                         <input required="" placeholder="Enter Loan" type="text" class="input" name = "loanAmount"><br><br>
                         <button type="submit" name = "confirmLoan" class="btn btn-outline-primary">Confirm</button>
@@ -157,6 +157,7 @@
             showdetailBtn.forEach(function(row) {
                 row.addEventListener('click', function() {
                     let loan_id = this.getAttribute('data-loan_id');
+                    let interest = this.getAttribute('data-interest');
                     let fname = this.getAttribute('data-fname');
                     let lname = this.getAttribute('data-lname');
                     let gender = this.getAttribute('data-gender');
@@ -167,6 +168,7 @@
                     let holder = this.getAttribute('data-holder');
                     let loan_money = this.getAttribute('data-loan_money');
                     let bank_number = this.getAttribute('data-bank_number');
+                    let deadline = this.getAttribute('data-deadline');
 
                     let fname_input  = document.getElementById("firstName");
                     let lname_input  = document.getElementById("lastName");
@@ -179,7 +181,11 @@
                     let bankNumber_input  = document.getElementById("bankNumber");
                     let display_money_input  = document.getElementById("display_money");
                     let id_display_input  = document.getElementById("id_display");
+                    let date_display_input  = document.getElementById("date_display");
+                    let interest_display_input  = document.getElementById("interest_display");
 
+                    interest_display_input.value = interest;
+                    date_display_input.value = deadline;
                     fname_input.textContent = fname;
                     lname_input.textContent = lname;
                     gender_input.textContent = gender;

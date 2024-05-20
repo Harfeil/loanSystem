@@ -125,6 +125,7 @@
                     $loanData[] = [
                         'fullname' => $row["fullname"],
                         'loan_money' => $row["loan_money"],
+                        'loan_date' => $row["loan_date"],
                         'total_payment' => $totalPayment,
                         'deadline' => $row["deadline"],
                         'status' => $row["status"]
@@ -189,14 +190,6 @@
         }
         
         public function addLoan($data) {
-            // Define addDaysToCurrentDate function as an anonymous function
-            $addDaysToCurrentDate = function ($daysToAdd) {
-                $currentDate = new DateTime();
-                $futureDate = clone $currentDate;
-                $futureDate->modify("+$daysToAdd days");
-                return $futureDate;
-            };
-
             $num_months = $_POST["month_select"];
             $total_months = intval($num_months) * 28;
 
@@ -208,40 +201,67 @@
             $totalInterest = $totalAmount * $floatValue;
             $currentDate = date("Y-m-d");
 
-            // Use the addDaysToCurrentDate function directly
-            $futureDateObject = $addDaysToCurrentDate($total_months);
-            $deadline = $futureDateObject->format('Y-m-d');
 
-            $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline, user_id, status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$deadline', '$id', 'Pending')";
+            $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline_days, user_id, status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$total_months', '$id', 'Pending')";
             
             $result = $this->db->insert($sql);
+        }
+
+        public function minusDays(){
+            $sql = "UPDATE loan_tbl SET deadline_days = deadline_days - 1 WHERE deadline_days > 0";
+
+            $result = $this->db->update($updateSsqltatus);
         }
 
         
 
         public function transaction($data, $type){
+
+            $deadline_days = $_POST["date_deadline"];
             
+            $total_months = intval($deadline_days) * 28;
+            
+            $addDaysToCurrentDate = function ($daysToAdd) {
+                $currentDate = new DateTime();
+                $futureDate = clone $currentDate;
+                $futureDate->modify("+$daysToAdd days");
+                return $futureDate;
+            };
+
+            $futureDateObject = $addDaysToCurrentDate($total_months);
+            $deadline = $futureDateObject->format('Y-m-d');
+
             $type_trans = $type;
             $loan_id = $_POST["id_display"];
             $status = "Not Paid";
             $currentDate = date("Y-m-d");
 
-            $sql = "INSERT INTO transaction_table (t_type, loan_id, status) VALUES ('$type_trans', '$loan_id', '$status')";
+            $interest = $_POST["interest"];
+            $total_interest = intval($interest);
+
+            $total_money = $_POST["loanAmount"];
+            $totalAmount = intval($total_money);
+
+            $total_payment = $totalAmount - $total_interest;
+
+            $sql = "INSERT INTO transaction_table (t_type, loan_id, status, date) VALUES ('$type_trans', '$loan_id', '$status', '$currentDate')";
             
-            $result = $this->db->update($sql);
+            $result = $this->db->insert($sql);
+
+            $updateStatus = "UPDATE loan_tbl SET status = 'Accepted', deadline = '$deadline', total_payment = '$total_payment' WHERE loan_id = '$loan_id'";
+
+            $resultStatus = $this->db->update($updateStatus);
 
         }
 
         public function getListLoan(){
-            $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
+            $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.deadline_days as deadline_days, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
             $result = $this->db->retrieve($sql);
 
             if ($result) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     $fullname = $row["fname"] . " " . $row["lname"];
-                    $totalPayment = $row["loan_money"] - $row["interest"];
                     $loanlist[] = [
-                        'total_payment' => $totalPayment,
                         'full_name' => $fullname,
                         'fname' => $row["fname"],
                         'lname' => $row["lname"],
@@ -254,8 +274,9 @@
                         'holder' => $row["holder"],
                         'loan_id' => $row["loan_id"],
                         'loan_money' => $row["loan_money"],
+                        'interest' => $row["interest"],
                         'loan_date' => $row["loan_date"],
-                        'deadline' => $row["deadline"],
+                        'deadline' => $row["deadline_days"],
                         'status' => $row["status"]
                     ];
                 }
@@ -267,15 +288,14 @@
         }
 
         public function getTransaction(){
-            $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birth, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_money as money, loan_tbl.deadline as deadline, loan_tbl.with_interest as interest, loan_tbl.loan_id as loan_id, transaction_table.t_type as type, transaction_table.date as date, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id";
+            $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birth, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_money as money, loan_tbl.deadline as deadline, loan_tbl.with_interest as interest, loan_tbl.total_payment as total_payment, loan_tbl.loan_id as loan_id, transaction_table.t_type as type, transaction_table.date as date, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY transaction_table.t_id DESC";
             $result = $this->db->retrieve($sql);
 
             if ($result) {
                 while ($row = mysqli_fetch_assoc($result)) {
-                    $totalPayment = $row["interest"] + $row["money"];
                     $fullname  = $row["fname"] . " " . $row["lname"];
                     $transaction[] = [
-                        'total_payment' => $totalPayment,
+
                         'fullname' => $fullname,
                         'fname' => $row["fname"],
                         'lname' => $row["lname"],
@@ -283,6 +303,7 @@
                         'birth' => $row["birth"],
                         'age' =>  $row["age"],
                         'bank_name' => $row["bank_name"],
+                        'total_payment' => $row["total_payment"],
                         'money' => $row["money"],
                         'deadline' => $row["deadline"],
                         'interest' => $row["interest"],
