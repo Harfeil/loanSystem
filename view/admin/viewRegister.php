@@ -30,7 +30,8 @@
                 
                     <?php 
                     
-                        $allUsers = $getUsers->getUsers();
+                        $where = "";
+                        $allUsers = $getUsers->getUsers($where);
 
                         $tableDisplay = [];
 
