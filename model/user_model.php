@@ -1,5 +1,6 @@
 <?php
 
+
     class Register{
 
         public $db;
@@ -78,7 +79,53 @@
         
         
         public function getUsers() {
+
             $sql = "SELECT * FROM user_tbl ORDER BY id DESC";
+            
+            
+            $result = $this->db->retrieve($sql);
+
+            $usersData = [];
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $usersData[] = [
+                        'id' => $row["id"],
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birthday' => $row["birthday"],
+                        'age' => $row["age"],
+                        'email' => $row["email"],
+                        'bank_name' => $row["bank_name"],
+                        'bank_number' => $row["bank_number"],
+                        'holder_name' => $row["holder_name"],
+                        'tin_num' => $row["tin_num"],
+                        'com_name' => $row["com_name"],
+                        'com_address' => $row["com_address"],
+                        'com_num' => $row["com_num"],
+                        'position' => $row["position"],
+                        'earning' => $row["earning"],
+                        'proof_bill' => $row["proof_bill"],
+                        'proof_id' => $row["proof_id"],
+                        'proof_coe' => $row["proof_coe"],
+                        'account_type' => $row["account_type"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $usersData = "No user found";
+            }
+
+            return $usersData;
+        }
+
+        public function getSpecificUser() {
+
+            $id = $_SESSION["user_id"];
+
+            $sql = "SELECT * FROM user_tbl WHERE id = '$id' ";
+            
+            
             $result = $this->db->retrieve($sql);
 
             $usersData = [];
@@ -167,6 +214,7 @@
             
             $sql = "SELECT * FROM $tableName WHERE $columnName =  '$userId'";
             $result = $this->db->retrieve($sql);
+            
             return $result;
         }
 
@@ -211,6 +259,164 @@
             $sql = "UPDATE loan_tbl SET deadline_days = deadline_days - 1 WHERE deadline_days > 0";
 
             $result = $this->db->update($updateSsqltatus);
+        }
+
+        public function savings($data, $type){
+
+            
+            $status = "Pending";
+            $currentDate = date("Y-m-d");
+            $user_id = $_SESSION["user_id"];
+            $trans_type = $type;
+            $user_id = $_SESSION["user_id"];
+
+            if($type === "Deposit"){
+                $amount = $_POST["amount_dep"];
+
+                $sql = "INSERT INTO savings_tbl (s_type, s_amount, s_status, s_date, user_id) VALUES ('$trans_type', '$amount', '$status', '$currentDate', '$user_id')";
+
+                $result = $this->db->insert($sql);
+                
+            }else if($type === "Withdraw"){
+                $amount = $_POST["withdraw_amount"];
+                $error = false;
+
+                $sql = "SELECT s_id, s_amount, s_date, s_withdraw_attempt FROM savings_tbl WHERE user_id = '$user_id' ORDER BY s_id DESC";
+
+                $result = $this->db->retrieve($sql);
+                
+                if ($result) {
+                    if ($row = mysqli_fetch_assoc($result)) {
+                        $total_withdraw = $row["s_withdraw_attempt"];
+                        $amount_remain = $row["s_amount"];
+                        $last_withdraw = $row["s_date"];
+                    }
+                }
+
+
+                if($last_withdraw !==  $currentDate){
+                    $total_withdraw = 0;
+                }
+
+                if($amount < 500){
+                    $error = true;
+                    $session["message"] = "Your amount must be greater than or equal 500";
+                }
+
+                if($amount > $amount_remain){
+                    $error = true;
+                    $session["message"] = "You dont have enough balance";
+                }
+                
+                if($total_withdraw > 4){
+                    $error = true;
+                    $session["message"] = "You have reached the maximum(5) withdraw";
+                }
+
+                if($error === false){
+                    $total_withdrawal = $total_withdraw + 1;
+                    $sql = "INSERT INTO savings_tbl (s_type, s_amount, s_withdraw_attempt, s_status, s_date, user_id) VALUES ('$trans_type', '$amount', '$total_withdrawal', '$status', '$currentDate', '$user_id')";
+
+                    $result = $this->db->insert($sql);
+                }
+            }
+
+            
+        }
+
+        public function updateSavings($data, $type){
+
+            $total_amount = $_POST["deposit_amount"];
+            $user_id = $_SESSION["user_id"];
+            $s_id = $_POST["id_display"];
+
+            $sql = "SELECT id, total_savings FROM user_tbl WHERE id = '$user_id' ORDER BY id DESC";
+
+            $result = $this->db->retrieve($sql);
+
+            $total_savings = 0;
+
+             if ($result) {
+                if ($row = mysqli_fetch_assoc($result)) {
+                    $total_savings= $row["total_savings"];
+                }
+            }
+
+
+            if($type === "Deposit"){
+
+                $total_saving_dep = $total_amount + $total_savings;
+
+                $sqlDep = "UPDATE savings_tbl SET s_total_savings = '$total_saving_dep', s_status = 'Approved' WHERE s_id = '$s_id'";
+                
+                $sqlUser = "UPDATE user_tbl SET total_savings = '$total_saving_dep' WHERE id = '$user_id'";
+                
+            }else if($type === "Withdraw"){
+
+                $total_saving_dep =  $total_savings - $total_amount;
+
+                $sqlDep= "UPDATE savings_tbl SET s_total_savings = '$total_saving_dep', s_status = 'Approved' WHERE s_id = '$s_id'";
+
+                $sqlUser = "UPDATE user_tbl SET total_savings = '$total_saving_dep' WHERE id = '$user_id'";
+            }
+
+           
+            $results= $this->db->update($sqlDep);
+            $resultUser= $this->db->update($sqlUser);
+
+        }
+
+        public function getBillings(){
+            $sql = "SELECT savings_tbl.s_id as s_id, savings_tbl.s_type as s_type, savings_tbl.s_total_savings as total_amount, savings_tbl.s_amount as s_amount, savings_tbl.s_status as s_status, savings_tbl.s_date as s_date, savings_tbl.user_id as user_id, user_tbl.bank_name as bank_name, user_tbl.bank_number as bank_number, user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.holder_name as holder_name FROM savings_tbl INNER JOIN user_tbl ON savings_tbl.user_id = user_tbl.id ORDER BY s_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $fullname = $row["fname"] . " " . $row["lname"];
+                    $savings[] = [
+                        'full_name' => $fullname,
+                        'user_id' => $row["user_id"],
+                        's_id' => $row["s_id"],
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        's_type' => $row["s_type"],
+                        's_amount' => $row["s_amount"],
+                        'holder_name' => $row["holder_name"],
+                        's_status' => $row["s_status"],
+                        's_date' => $row["s_date"],
+                        'bank_name' => $row["bank_name"],
+                        'bank_number' => $row["bank_number"]
+                    ];
+                }
+            }else{
+                $savings = "No Loans Found";
+            }
+
+            return $savings;
+        }
+
+        public function getSavings(){
+            $sql = "SELECT savings_tbl.s_id as s_id, savings_tbl.s_type as s_type, savings_tbl.s_total_savings as s_amount, savings_tbl.s_status as s_status, savings_tbl.s_date as s_date, user_tbl.bank_name as bank_name, user_tbl.bank_number as bank_number, user_tbl.total_savings as savings FROM savings_tbl INNER JOIN user_tbl ON savings_tbl.user_id = user_tbl.id ORDER BY s_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                if ($row = mysqli_fetch_assoc($result)) {
+                    $savings[] = [
+                        's_id' => $row["s_id"],
+                        'savings' => $row["savings"],
+                        's_type' => $row["s_type"],
+                        's_amount' => $row["s_amount"],
+                        's_status' => $row["s_status"],
+                        's_date' => $row["s_date"],
+                        'bank_name' => $row["bank_name"],
+                        'bank_number' => $row["bank_number"]
+                    ];
+                }
+            }else{
+                $savings = "No Loans Found";
+            }
+
+            return $savings;
         }
 
         
