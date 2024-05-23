@@ -16,12 +16,17 @@
         if(isset($_POST["deposit_amount"])){
             $type = "Deposit";
             $deposit = $deposit->savings($_POST, $type);
+
+            header("Location: ../view/users/savings.php");
         }
 
         if(isset($_POST["withdraw_submit"])){
             $type = "Withdraw";
             $withdraw = $deposit->savings($_POST, $type);
+
+            header("Location: ../view/users/savings.php");
         }
+        
     }
 
 ?>

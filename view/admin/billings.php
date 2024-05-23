@@ -108,7 +108,7 @@
                     <p id = "display_money">Amount Deposited</p>
 
                     <form action="../../controller/billings.php" method = "POST">
-                        <input type="text" id = "id_display" name = "id_display" >
+                        <input type="text" id = "id_display" name = "id_display" hidden>
                         <input required="" placeholder="Enter Deposit" type="text" class="input" name = "deposit_amount"><br><br>
                         <button type="submit" name = "" id = "show_deposit_btn" class="btn btn-outline-primary">Confirm</button>
                     </form>

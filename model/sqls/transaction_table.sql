@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 16, 2024 at 05:48 AM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.2.0
+-- Generation Time: May 23, 2024 at 09:01 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,9 +40,9 @@ CREATE TABLE `transaction_table` (
 --
 
 INSERT INTO `transaction_table` (`t_id`, `t_type`, `loan_id`, `status`, `date`) VALUES
-(0, 'Loan', 25, 'Not Paid', '0000-00-00'),
-(0, 'Loan', 24, 'Not Paid', '0000-00-00'),
-(0, 'Loan', 23, 'Not Paid', '0000-00-00');
+(1, 'Loan', 25, 'Not Paid', '0000-00-00'),
+(2, 'Loan', 24, 'Not Paid', '0000-00-00'),
+(3, 'Loan', 23, 'Not Paid', '0000-00-00');
 
 --
 -- Indexes for dumped tables
@@ -52,7 +52,18 @@ INSERT INTO `transaction_table` (`t_id`, `t_type`, `loan_id`, `status`, `date`) 
 -- Indexes for table `transaction_table`
 --
 ALTER TABLE `transaction_table`
+  ADD PRIMARY KEY (`t_id`),
   ADD KEY `loan_id` (`loan_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `transaction_table`
+--
+ALTER TABLE `transaction_table`
+  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables

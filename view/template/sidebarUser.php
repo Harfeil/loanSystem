@@ -1,3 +1,17 @@
+<?php 
+
+    session_start();
+    
+    include_once "../../model/user_model.php";
+        
+    require_once "../../controller/db_connector.php";
+
+    $sidebar = new Register();
+
+    $side = $sidebar->getSideBar();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +29,14 @@
             <ul class="list-group links">
                 <li class="goLinks"><a id = "linkColor" href="../users/dashboard.php"> <img id = "linkColor" height = "30px" width = "30px" src="../../model/upload/dashboard.png" alt=""> Dashboard</a></li>
                 <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/loan.png" alt=""> <a href="../../view/users/loanPage.php">Loan</a></li>
-                <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/save.png" alt=""><a href="../../view/users/savings.php"> Savings</a></li>
+                <?php 
+
+                    $tableDisplay = "
+                        <li class='goLinks'><img height = '30px' width = '30px' src='../../model/upload/save.png' alt=''><a href= '$side'> Savings</a></li>
+                        ";
+
+                ?>
+                <?php echo $tableDisplay; ?>
                 <li class="goLinks"><img height = "30px" width = "30px" src="../../model/upload/notification.png" alt=""> <a href="../users/notification.php">Notifications</a></li>
                 <li class="goLinks"><a href="../../view/users/profile.php"><img height = "30px" width = "30px" src="../../model/upload/profile.png" alt=""> Profile</a></li>
             </ul>
