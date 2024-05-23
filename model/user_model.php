@@ -284,9 +284,14 @@
                     }
                 }
 
+                if($amount < 100 || $amount > 1000 ){
+                    $error = true;
+                    $_SESSION["message"] = "Your deposit must be greater than 100 or less than 1000)";
+                }
+
                 if($total_savings >= 100000){
                     $error = true;
-                    $session["message"] = "Youve reached the maximum savings(100k)";
+                    $_SESSION["message"] = "Youve reached the maximum savings(100k)";
                 }
 
                 if($error === false){
@@ -318,17 +323,17 @@
 
                 if($amount < 500){
                     $error = true;
-                    $session["message"] = "Your amount must be greater than or equal 500";
+                    $_SESSION["message"] = "Your amount must be greater than or equal 500";
                 }
 
                 if($amount > $amount_remain){
                     $error = true;
-                    $session["message"] = "You dont have enough balance";
+                    $_SESSION["message"] = "You dont have enough balance";
                 }
                 
                 if($total_withdraw > 4){
                     $error = true;
-                    $session["message"] = "You have reached the maximum(5) withdraw";
+                    $_SESSION["message"] = "You have reached the maximum(5) withdraw";
                 }
 
                 if($error === false){

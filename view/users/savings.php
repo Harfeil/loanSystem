@@ -1,5 +1,6 @@
 <?php 
 
+
     include_once "../template/sidebarUser.php";
 
     include_once "../../controller/db_connector.php";
@@ -37,6 +38,7 @@
                     <button id = "savingDepositBtn">Deposit</button>
                     <button id = "savingWithdrawBtn">Withdrawal</button>
                 </div>
+
             </div>
         </div>
         <div id="popupFormDeposit" class="popup-details-deposit">
