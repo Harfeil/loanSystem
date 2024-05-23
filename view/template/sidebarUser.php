@@ -33,7 +33,7 @@
 
                     $tableDisplay = "
                         <li class='goLinks'><img height = '30px' width = '30px' src='../../model/upload/save.png' alt=''><a href= '$side'> Savings</a></li>
-                        ";
+                    ";
 
                 ?>
                 <?php echo $tableDisplay; ?>
