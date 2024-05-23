@@ -20,7 +20,7 @@
             header("Location: ../view/users/savings.php");
         }
 
-        if(isset($_POSTz"withdraw_submit"])){
+        if(isset($_POST["withdraw_submit"])){
             $type = "Withdraw";
             $withdraw = $deposit->savings($_POST, $type);
 
