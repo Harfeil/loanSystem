@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 23, 2024 at 08:03 AM
+-- Generation Time: May 23, 2024 at 09:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -116,7 +116,8 @@ INSERT INTO `user_tbl` (`id`, `fname`, `lname`, `gender`, `birthday`, `age`, `em
 (719, 'asd', 'asd', 'Male', '2024-05-09', 0, 'asd@gmail.com', 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', '../../model/upload/savings.png', '../../model/upload/carazo.PNG', '../../model/upload/carazo.PNG', 'asd', 'User', 'Premium', 0, 0, 'Pending', 0.00),
 (720, 'asda', 'asda', 'Female', '2024-04-30', 2, 'arfl@gmail.com', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', '../../model/upload/savings.png', '../../model/upload/savings.png', '../../model/upload/profile.png', 'asda', 'User', 'Premium', 0, 0, 'Pending', 0.00),
 (721, 'asda', 'asda', 'Female', '2024-04-30', 2, 'arfl@gmail.com', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', 'asda', '../../model/upload/savings.png', '../../model/upload/savings.png', '../../model/upload/profile.png', 'asda', 'User', 'Premium', 0, 0, 'Pending', 0.00),
-(722, 'Harfeil', 'Salmeron', 'Male', '2002-12-02', 21, 'Harfeil@gmail.com', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', '../../model/upload/ads.png', '../../model/upload/loan.png', '../../model/upload/loan.png', '$2y$10$A93FCZWwgfgUmYul0rq7pebcNXfZjT1Jhvr.h9xTfPJBzqZraU5Fu', 'User', 'Basic', 0, 0, 'Pending', 3000.00);
+(722, 'Harfeil', 'Salmeron', 'Male', '2002-12-02', 21, 'Harfeil@gmail.com', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', 'Harfeil', '../../model/upload/ads.png', '../../model/upload/loan.png', '../../model/upload/loan.png', '$2y$10$A93FCZWwgfgUmYul0rq7pebcNXfZjT1Jhvr.h9xTfPJBzqZraU5Fu', 'User', 'Basic', 0, 0, 'Pending', 0.00),
+(723, 'Jeremy', 'Jeremy', 'Male', '2002-12-02', 21, 'Jeremy@gmail.com', 'Jeremy', 'Jeremy', 'Jeremy', 'Jeremy', 'Jeremy', 'Jeremy', 'Jeremy', 'Jeremy', 'Jeremy', '../../model/upload/profile.png', '../../model/upload/notification.png', '../../model/upload/profile.png', '$2y$10$UW5jqy1RmzqSgeIS4yirfu/EWoJuZnFdy.0NvBGV5OYqCbP2dJS06', 'User', 'Premium', 0, 0, 'Pending', 0.00);
 
 --
 -- Indexes for dumped tables
@@ -136,7 +137,7 @@ ALTER TABLE `user_tbl`
 -- AUTO_INCREMENT for table `user_tbl`
 --
 ALTER TABLE `user_tbl`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=723;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=724;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

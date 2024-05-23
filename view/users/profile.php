@@ -1,6 +1,5 @@
 <?php 
 
-    session_start();
     include_once "../template/sidebarUser.php";
     
     include_once "../../controller/db_connector.php";

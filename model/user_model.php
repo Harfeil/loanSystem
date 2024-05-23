@@ -272,10 +272,28 @@
 
             if($type === "Deposit"){
                 $amount = $_POST["amount_dep"];
+                $error = false;
 
-                $sql = "INSERT INTO savings_tbl (s_type, s_amount, s_status, s_date, user_id) VALUES ('$trans_type', '$amount', '$status', '$currentDate', '$user_id')";
+                $sql = "SELECT id, total_savings FROM user_tbl WHERE id = '$user_id'";
 
-                $result = $this->db->insert($sql);
+                $result = $this->db->retrieve($sql);
+                
+                if ($result) {
+                    if ($row = mysqli_fetch_assoc($result)) {
+                        $total_savings = $row["total_savings"];
+                    }
+                }
+
+                if($total_savings >= 100000){
+                    $error = true;
+                    $session["message"] = "Youve reached the maximum savings(100k)";
+                }
+
+                if($error === false){
+                    $sqlDep = "INSERT INTO savings_tbl (s_type, s_amount, s_status, s_date, user_id) VALUES ('$trans_type', '$amount', '$status', '$currentDate', '$user_id')";
+
+                    $resultDep = $this->db->insert($sqlDep);
+                }
                 
             }else if($type === "Withdraw"){
                 $amount = $_POST["withdraw_amount"];
@@ -524,6 +542,20 @@
             }
             
             return $transaction;
+        }
+
+        public function getSideBar(){
+
+            $type = $_SESSION["account_type"];
+            
+            if($type === "Basic"){
+                $link = "";
+            }else if($type === "Premium"){
+                $link = "../../view/users/savings.php";
+            }
+
+            return $link;
+
         }
 
 

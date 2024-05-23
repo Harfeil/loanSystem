@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 23, 2024 at 08:03 AM
+-- Generation Time: May 23, 2024 at 09:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,7 +55,11 @@ INSERT INTO `savings_tbl` (`s_id`, `s_type`, `s_amount`, `s_status`, `s_total_sa
 (10, 'Withdraw', 500.00, 'Pending', 0.00, 2, '2024-05-23', 722),
 (11, 'Withdraw', 500.00, 'Pending', 0.00, 3, '2024-05-23', 722),
 (12, 'Withdraw', 500.00, 'Pending', 0.00, 4, '2024-05-23', 722),
-(13, 'Withdraw', 500.00, 'Pending', 0.00, 5, '2024-05-23', 722);
+(13, 'Withdraw', 500.00, 'Pending', 0.00, 5, '2024-05-23', 722),
+(14, 'Deposit', 100.00, 'Pending', 0.00, 0, '2024-05-23', 722),
+(15, 'Deposit', 500.00, 'Approved', 100000.00, 0, '2024-05-23', 722),
+(16, 'Deposit', 1000.00, 'Pending', 0.00, 0, '2024-05-23', 722),
+(17, 'Withdraw', 500.00, 'Pending', 0.00, 1, '2024-05-23', 722);
 
 --
 -- Indexes for dumped tables
@@ -75,7 +79,7 @@ ALTER TABLE `savings_tbl`
 -- AUTO_INCREMENT for table `savings_tbl`
 --
 ALTER TABLE `savings_tbl`
-  MODIFY `s_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `s_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

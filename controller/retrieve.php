@@ -30,6 +30,7 @@
                         }
 
                         $_SESSION["user_id"] = $row["id"];
+                        $_SESSION["account_type"] = $row["account_type"];
                         
                     }else {
                         header("Location: ../view/login.php");
