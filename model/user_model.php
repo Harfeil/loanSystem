@@ -299,14 +299,14 @@
                 $amount = $_POST["withdraw_amount"];
                 $error = false;
 
-                $sql = "SELECT s_id, s_amount, s_date, s_withdraw_attempt FROM savings_tbl WHERE user_id = '$user_id' ORDER BY s_id DESC";
+                $sql = "SELECT savings_tbl.s_id as s_id, savings_tbl.s_amount as s_amount, savings_tbl.s_date as s_date, savings_tbl.s_withdraw_attempt as s_withdraw_attempt, user_tbl.total_savings as total_savings FROM savings_tbl INNER JOIN user_tbl ON savings_tbl.user_id = user_tbl.id WHERE user_id = '$user_id' ORDER BY s_id DESC";
 
                 $result = $this->db->retrieve($sql);
                 
                 if ($result) {
                     if ($row = mysqli_fetch_assoc($result)) {
                         $total_withdraw = $row["s_withdraw_attempt"];
-                        $amount_remain = $row["s_amount"];
+                        $amount_remain = $row["total_savings"];
                         $last_withdraw = $row["s_date"];
                     }
                 }
@@ -431,7 +431,7 @@
                     ];
                 }
             }else{
-                $savings = "No Loans Found";
+                $savings = "No Savings Found";
             }
 
             return $savings;
@@ -555,7 +555,6 @@
             }
 
             return $link;
-
         }
 
 
