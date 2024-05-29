@@ -1,12 +1,11 @@
 <?php 
-
     include_once "../template/sidebarUser.php";
 
     include_once "../../model/user_model.php";
     
     require_once "../../controller/db_connector.php";
-
     $allLoan = new Register();
+
 
 ?>
     </div>
@@ -28,7 +27,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
+                    <?php
+                    
+                    echo $_SESSION["message"];
+                    
                     $allLoans = $allLoan->getLoans();
                     $tableDisplay = [];
 
@@ -109,10 +111,15 @@
                     <input type="text" id="inputNumberLoan" placeholder="Enter loan amount 5000 - 10000" name = "numberOfAmount"><br><br>
                     <label for="">Set Due Date</label>
                     <select name="month_select" id="month_select">
-                        <option value="1">1 Month</option>
-                        <option value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="12">12 Months</option>
+                        <?php
+                        
+                            $month_options = $allLoan->getMonthOption();
+
+                            foreach ($month_options as $option) {
+                                echo '<option value="' . $option . '">' . $option . ' Months</option>';
+                            }
+
+                        ?>
                     </select>
                     <p id = "errorLoanDisplay"></p><br><br><br>
                     <button type="submit" name = "submitAmount"  class = "btn btn-primary" id = "submitLoanAmount">Submit</button>

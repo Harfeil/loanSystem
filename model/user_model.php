@@ -1,6 +1,5 @@
 <?php
 
-
     class Register{
 
         public $db;
@@ -186,7 +185,7 @@
         }
 
         public function getNotif(){
-            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY transaction_table.t_id DESC";
+            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY transaction_table.t_id DESC";
 
             $result = $this->db->retrieve($sql);
 
@@ -198,8 +197,11 @@
                         'type' => $row["type"],
                         'status' => $row["status"],
                         'money' => $row["money"],
+                        'monthly' => $row["total_monthly"],
+                        'monthly_deadline' => $row["monthly_deadline"],
                         'total_payment' => $totalPayment,
                         'interest' => $row["interest"],
+                        'full_name' => $row["full_name"],
                         'deadline' => $row["deadline"]
                     ];
                 }
@@ -238,21 +240,64 @@
         }
         
         public function addLoan($data) {
+            $id = $_SESSION["user_id"];
             $num_months = $_POST["month_select"];
             $total_months = intval($num_months) * 28;
 
+            $error = false;
             $money = $_POST["numberOfAmount"];
-            $totalAmount = intval($money);
+            
             $id = $_SESSION["user_id"];
-            $percentage = "0.03";
-            $floatValue = floatval($percentage);
-            $totalInterest = $totalAmount * $floatValue;
             $currentDate = date("Y-m-d");
 
+            $_SESSION["message"] = "";
+            function isValidWholeThousand($number) {
+                // Define the regex pattern for a whole thousand
+                $pattern = '/^[1-9][0-9]*000$/';
+                // Check if the number matches the pattern
+                return preg_match($pattern, $number);
+            }
 
-            $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline_days, user_id, status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$total_months', '$id', 'Pending')";
+            if(isValidWholeThousand($money)){
+                $error = false;
+                $_SESSION["message"] = "";
+            }else{
+                $error = true;
+                $_SESSION["message"] = "Your money must be a whole thousand";
+            }
+
+            if($money < 5000 || $money > 10000){
+                $error = true;
+                $_SESSION["message"] = "Your money must be greater than 5000 or equal 10000";
+            }
+
+            $sqlUser = "SELECT * FROM user_tbl WHERE id = '$id '";
+
+            $resultUser = $this->db->retrieve($sqlUser);
+
+
+            if ($resultUser) {
+                if ($row = mysqli_fetch_assoc($resultUser)) {
+                   $total_loan = $row["total_loan"];
+                }
+            }
+
+            if($total_loan >= 10000){
+                $_SESSION["message"] = "Your have reached the maximum amount to loan";
+                $error = true;
+            }
+
+            if($error === false){
+                $percentage = "0.03";
+                $floatValue = floatval($percentage);
+                $totalAmount = intval($money);
+                $totalInterest = $totalAmount * $floatValue;
+                $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline_days, user_id, status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$total_months', '$id', 'Pending')";
             
-            $result = $this->db->insert($sql);
+                $_SESSION["message"] = "Loan Successfully";
+                $result = $this->db->insert($sql);
+            }
+
         }
 
         public function minusDays(){
@@ -419,13 +464,41 @@
         }
 
         public function getSavings(){
-            $sql = "SELECT savings_tbl.s_id as s_id, savings_tbl.s_type as s_type, savings_tbl.s_total_savings as s_amount, savings_tbl.s_status as s_status, savings_tbl.s_date as s_date, user_tbl.bank_name as bank_name, user_tbl.bank_number as bank_number, user_tbl.total_savings as savings FROM savings_tbl INNER JOIN user_tbl ON savings_tbl.user_id = user_tbl.id ORDER BY s_id DESC";
+            
+            $user_id = $_SESSION["user_id"];
+            $sql = "SELECT savings_tbl.s_id as s_id, savings_tbl.s_type as s_type, savings_tbl.s_total_savings as s_amount, savings_tbl.s_status as s_status, savings_tbl.s_date as s_date, user_tbl.bank_name as bank_name, user_tbl.bank_number as bank_number, user_tbl.total_savings as savings, CONCAT(user_tbl.fname, ' ' , user_tbl.lname) as full_name FROM savings_tbl INNER JOIN user_tbl ON savings_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$user_id' ORDER BY s_id DESC";
             $result = $this->db->retrieve($sql);
 
             if ($result) {
                 if ($row = mysqli_fetch_assoc($result)) {
                     $savings[] = [
                         's_id' => $row["s_id"],
+                        'full_name' => $row["full_name"],
+                        'savings' => $row["savings"],
+                        's_type' => $row["s_type"],
+                        's_amount' => $row["s_amount"],
+                        's_status' => $row["s_status"],
+                        's_date' => $row["s_date"],
+                        'bank_name' => $row["bank_name"],
+                        'bank_number' => $row["bank_number"]
+                    ];
+                }
+            }else{
+                $savings = "";
+            }
+
+            return $savings;
+        }
+
+        public function getAllSavings(){
+            $sql = "SELECT savings_tbl.s_id as s_id, savings_tbl.s_type as s_type, savings_tbl.s_amount as s_amount, savings_tbl.s_status as s_status, savings_tbl.s_date as s_date, user_tbl.bank_name as bank_name, user_tbl.bank_number as bank_number, user_tbl.total_savings as savings, CONCAT(user_tbl.fname, ' ' , user_tbl.lname) as full_name FROM savings_tbl INNER JOIN user_tbl ON savings_tbl.user_id = user_tbl.id ORDER BY s_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $savings[] = [
+                        's_id' => $row["s_id"],
+                        'full_name' => $row["full_name"],
                         'savings' => $row["savings"],
                         's_type' => $row["s_type"],
                         's_amount' => $row["s_amount"],
@@ -445,10 +518,9 @@
         
 
         public function transaction($data, $type){
+            $id = $_SESSION["user_id"];
 
             $deadline_days = $_POST["date_deadline"];
-            
-            $total_months = intval($deadline_days) * 28;
             
             $addDaysToCurrentDate = function ($daysToAdd) {
                 $currentDate = new DateTime();
@@ -457,8 +529,7 @@
                 return $futureDate;
             };
 
-            $futureDateObject = $addDaysToCurrentDate($total_months);
-            $deadline = $futureDateObject->format('Y-m-d');
+            $total_months = $deadline_days / 28;
 
             $type_trans = $type;
             $loan_id = $_POST["id_display"];
@@ -471,16 +542,32 @@
             $total_money = $_POST["loanAmount"];
             $totalAmount = intval($total_money);
 
-            $total_payment = $totalAmount - $total_interest;
+            $total_payment = $totalAmount + $total_interest;
 
-            $sql = "INSERT INTO transaction_table (t_type, loan_id, status, date) VALUES ('$type_trans', '$loan_id', '$status', '$currentDate')";
+            $over_all_total = $total_payment - $total_interest;
+            $loops = 0;
             
-            $result = $this->db->insert($sql);
+            while($loops < $deadline_days){
+                $new_days = $loops + 28;
+                $payment = $total_money / $total_months;
+                $futureDateObject = $addDaysToCurrentDate($new_days);
+                $deadline = $futureDateObject->format('Y-m-d');
 
-            $updateStatus = "UPDATE loan_tbl SET status = 'Accepted', deadline = '$deadline', total_payment = '$total_payment' WHERE loan_id = '$loan_id'";
+                $sql = "INSERT INTO transaction_table (t_type, loan_id, status, total_payment, due_date, date) VALUES ('$type_trans', '$loan_id', '$status', '$payment', '$deadline', '$currentDate')";
+            
+                $result = $this->db->insert($sql);
+
+                $loops = $new_days;
+            }
+
+            $updateUser = "UPDATE user_tbl SET total_loan = '$total_money' WHERE id = '$id'";
+
+            $resultLoan = $this->db->update($updateUser);
+
+
+            $updateStatus = "UPDATE loan_tbl SET status = 'Accepted', deadline = '$deadline', total_payment = '$over_all_total' WHERE loan_id = '$loan_id'";
 
             $resultStatus = $this->db->update($updateStatus);
-
         }
 
         public function getListLoan(){
@@ -552,16 +639,58 @@
         public function getSideBar(){
 
             $type = $_SESSION["account_type"];
-            
-            if($type === "Basic"){
-                $link = "";
-            }else if($type === "Premium"){
-                $link = "../../view/users/savings.php";
+            $role = $_SESSION["role"];
+            if($role === "User"){
+                if($type === "Basic"){
+                    $link = "basic";
+                }else if($type === "Premium"){
+                    $link = "premium";
+                }
+            }else{
+                $link = "premium";
             }
 
             return $link;
         }
 
+        public function getDeadline(){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT loan_tbl.user_id as user_id, loan_tbl.deadline as deadline, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id  WHERE transaction_table.status = 'Not Paid' AND user_id = '$id'";
+
+            $result = $this->db->retrieve($sql);
+
+            $currentDate = date("Y-m-d");
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $deadline = $row["deadline"];
+                }
+            }
+
+            if($currentDate > $deadline){
+                $user_status = "Disabled";
+
+                $sql = "UPDATE user_tbl SET status = '$user_status' WHERE id = '$id'";
+
+                $result = $this->db->update($sql);
+            }
+
+
+        }
+
+        public function praktisCron(){
+            $sql = "INSERT INTO praktis (name, age) VALUES ('Jeremy', '12')";
+            
+            $result = $this->db->insert($sql);
+        }
+
+        public function getMonthOption(){
+            if (!isset($_SESSION['options'])) {
+                $_SESSION['options'] = ['1', '3', '6', '12'];
+            }
+
+            return $_SESSION['options'];
+        }
 
     }
 
