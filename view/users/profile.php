@@ -143,7 +143,7 @@
                 </div>
             </div>
             <div id="popupForm" class="popup-details">
-                <form action="">
+                <form action="../../controller/registration.php" method = "POST" enctype = "multipart/form-data">
                     
                     <img id = "closeImage" src="../../model/upload/close.png" alt="" width = "30px" height = "30px">
 
@@ -211,7 +211,7 @@
 
                         <div class = "companyAddress">
                             <h6>COMPANY ADDRESS</h6>
-                            <input type="text" id = "companyAddressProfile" name = "company_name">
+                            <input type="text" id = "companyAddressProfile" name = "company_address">
                         </div>
 
                         <div class = "companyNumer">
@@ -264,6 +264,9 @@
 
                         <?php echo $display; ?>
                         
+                        <button type="submit" class="btn btn-outline-primary" name = "confirmEdit">Save</button>
+                        <button type="submit" class="btn btn-outline-danger" name = "cancel">Cancel</button>
+
                     </div>
                 </form>
             </div>

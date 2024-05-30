@@ -68,5 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $registerUser = $register->addLoan($_POST);
     }
+
+    if(isset($_POST["confirmEdit"])){
+
+        $registerUser = $register->updateUser($_POST, $_FILES);
+
+    }
 }
 ?>

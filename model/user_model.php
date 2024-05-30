@@ -75,6 +75,30 @@
             $result = $this->db->insert($sql);
 
         }
+
+        public function updateUser($data, $file){
+            
+            $id = $_SESSION["user_id"];
+            $fname = $_POST["f_name"];
+            $lname = $_POST["l_name"];
+            $gender = $_POST["gender"];
+            $birthday = $_POST["birthday"];
+            $age = $_POST["age"];
+            $email = $_POST["email"];
+            $bankName = $_POST["bank_name"];
+            $bankAccNum = $_POST["bank_number"];
+            $holderName = $_POST["holder_name"];
+            $tinNum = $_POST["tin_id"];
+            $comName = $_POST["company_name"];
+            $comAddress = $_POST["company_address"];
+            $comNum = $_POST["company_number"];
+            $position = $_POST["position"];
+            $earning = $_POST["earning"];
+
+            $sql = "UPDATE user_tbl SET fname = '$fname', lname = '$lname', gender = '$gender', birthday = '$birthday', age = '$age', email = '$email', bank_name = '$bankName', bank_number = '$bankAccNum', holder_name = '$holderName', tin_num = '$tinNum', com_name = '$comName', com_address = '$comAddress', com_num = '$comNum', position = '$position', earning = '$earning' WHERE id = '$id'";
+
+            $result = $this->db->update($sql);
+        }
         
         
         public function getUsers() {
