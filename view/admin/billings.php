@@ -33,7 +33,11 @@
 
                                 $tableDisplay = [];
 
-                                foreach ($allNotif as $notifs){
+                                if (empty($allNotif)) {
+                                    $tableDisplay[] = "
+                                        <td colspan = '6'>No Billings Found</td>";
+                                }else{
+                                    foreach ($allNotif as $notifs){
                                     $tableDisplay[] = "
                                         <tr>
                                             <td>{$notifs['full_name']}</td>
@@ -42,7 +46,9 @@
                                             <td>{$notifs['monthly_deadline']}</td>
                                             <td>{$notifs['status']}</td>
                                         </tr>";
+                                    }
                                 }
+                                
 
                                 $tableContent = implode("\n", $tableDisplay);
                             ?>

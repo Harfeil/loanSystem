@@ -10,8 +10,6 @@
     $allUsers = $getUsers->getSpecificUser();
 
     $tableDisplay = [];
-
-    session_destroy();
 ?>
 
         </div>

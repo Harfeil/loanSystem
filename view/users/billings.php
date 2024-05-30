@@ -27,19 +27,25 @@
                         <tbody>
                             <?php 
 
-                                $allNotif = $getNotif->getNotif();
+                                $allNotif = $getNotif->getNotifSpecific();
 
                                 $tableDisplay = [];
 
-                                foreach ($allNotif as $notifs){
+                                if (empty($allNotif)) {
+                                    $tableDisplay[] = "
+                                        <td colspan = '6'>No Billings Found</td>";
+                                }else{
+                                    foreach ($allNotif as $notifs){
                                     $tableDisplay[] = "
                                         <tr>
                                             <td>{$notifs['type']}</td>
                                             <td>{$notifs['monthly']}</td>
                                             <td>{$notifs['monthly_deadline']}</td>
                                             <td>{$notifs['status']}</td>
-                                        </tr>";
+                                    </tr>";
                                 }
+                                }
+                                
 
                                 $tableContent = implode("\n", $tableDisplay);
                             ?>

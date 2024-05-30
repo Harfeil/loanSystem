@@ -35,17 +35,25 @@
 
                         $tableDisplay = [];
 
-                        foreach ($allUsers as $user) {
+                        if(empty($allUsers)){
                             $tableDisplay[] = "
-                                <tr data-userId='{$user['id']}' data-fname='{$user['fname']}' data-lname='{$user['lname']}' data-gender='{$user['gender']}' data-birthday='{$user['birthday']}' data-age='{$user['age']}' data-email='{$user['email']}' data-bankName='{$user['bank_name']}' data-bankNumber='{$user['bank_number']}' data-holderName='{$user['holder_name']}' data-tinNum='{$user['tin_num']}' data-comName='{$user['com_name']}' data-comAdd='{$user['com_address']}' data-comNum='{$user['com_num']}' data-position='{$user['position']}' data-earning='{$user['earning']}' data-proofBill='{$user['proof_bill']}' data-proofId='{$user['proof_id']}' data-proofCoe='{$user['proof_coe']}' class='showDetailsBtn'>
-                                    <td>{$user['fname']}</td>
-                                    <td>{$user['lname']}</td>
-                                    <td>{$user['age']}</td>
-                                    <td>{$user['email']}</td>
-                                    <td>{$user['account_type']}</td>
-                                    <td>{$user['status']}</td>
-                                </tr>";
+                                <td colspan = '6'>No Users Found.</td>
+                            ";
+                        }else{
+                            foreach ($allUsers as $user) {
+                                $tableDisplay[] = "
+                                    <tr data-userId='{$user['id']}' data-fname='{$user['fname']}' data-lname='{$user['lname']}' data-gender='{$user['gender']}' data-birthday='{$user['birthday']}' data-age='{$user['age']}' data-email='{$user['email']}' data-bankName='{$user['bank_name']}' data-bankNumber='{$user['bank_number']}' data-holderName='{$user['holder_name']}' data-tinNum='{$user['tin_num']}' data-comName='{$user['com_name']}' data-comAdd='{$user['com_address']}' data-comNum='{$user['com_num']}' data-position='{$user['position']}' data-earning='{$user['earning']}' data-proofBill='{$user['proof_bill']}' data-proofId='{$user['proof_id']}' data-proofCoe='{$user['proof_coe']}' class='showDetailsBtn'>
+                                        <td>{$user['fname']}</td>
+                                        <td>{$user['lname']}</td>
+                                        <td>{$user['age']}</td>
+                                        <td>{$user['email']}</td>
+                                        <td>{$user['account_type']}</td>
+                                        <td>{$user['status']}</td>
+                                    </tr>";
+                            }
                         }
+
+                        
 
                         $tableContent = implode("\n", $tableDisplay);
 
@@ -261,7 +269,7 @@
                     form.style.display = "block";
                 });
             });
-         });
+        });
 
          let imgBtn = document.getElementById("closeImage");
 

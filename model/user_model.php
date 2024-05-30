@@ -112,7 +112,7 @@
                     ];
                 }
             }else{
-                $usersData = "No user found";
+                $usersData = "";
             }
 
             return $usersData;
@@ -178,7 +178,7 @@
                     ];
                 }
             }else{
-                $loanData = "No Loans Found";
+                $loanData = "";
             }
 
             return $loanData;
@@ -206,7 +206,36 @@
                     ];
                 }
             }else{
-                $notifications = "No Loans Found";
+                $notifications = "";
+            }
+
+            return $notifications;
+        }
+
+        public function getNotifSpecific(){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY transaction_table.t_id DESC";
+
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $totalPayment = $row["money"] - $row["interest"];
+                    $notifications[] = [
+                        'trans_id' => $row["trans_id"],
+                        'type' => $row["type"],
+                        'status' => $row["status"],
+                        'money' => $row["money"],
+                        'monthly' => $row["total_monthly"],
+                        'monthly_deadline' => $row["monthly_deadline"],
+                        'total_payment' => $totalPayment,
+                        'interest' => $row["interest"],
+                        'full_name' => $row["full_name"],
+                        'deadline' => $row["deadline"]
+                    ];
+                }
+            }else{
+                $notifications = "";
             }
 
             return $notifications;
@@ -457,7 +486,7 @@
                     ];
                 }
             }else{
-                $savings = "No Loans Found";
+                $savings = "";
             }
 
             return $savings;
@@ -597,7 +626,7 @@
                     ];
                 }
             }else{
-                $loanlist = "No Loans Found";
+                $loanlist = "";
             }
 
             return $loanlist;
@@ -630,7 +659,7 @@
                     ];
                 }
             }else{
-                $transaction = "No Transaction Found";
+                $transaction = "";
             }
             
             return $transaction;

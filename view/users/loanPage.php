@@ -34,7 +34,13 @@
                     $allLoans = $allLoan->getLoans();
                     $tableDisplay = [];
 
-                    foreach ($allLoans as $loans){
+                    if(empty($allLoans)){
+                        $tableDisplay[] = "
+                            <tr>
+                                <td colspan = '6'>No Loans Found.</td>
+                            </tr>";
+                    }else{
+                        foreach ($allLoans as $loans){
                         $tableDisplay[] = "
                             <tr>
                                 <td>{$loans['fullname']}</td>
@@ -42,7 +48,9 @@
                                 <td>{$loans['loan_date']}</td>
                                 <td>{$loans['status']}</td>
                             </tr>";
+                        }
                     }
+                    
 
                     $tableContent = implode("\n", $tableDisplay);
 

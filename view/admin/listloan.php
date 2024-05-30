@@ -34,33 +34,39 @@
                         $allListLoan = $getListLoan->getListLoan();
 
                         $tableDisplay = [];
-
-                            foreach ($allListLoan as $listLoan){
-                                $tableDisplay[] = "
-                                    <tr>
-                                        <td>{$listLoan['full_name']}</td>
-                                        <td>{$listLoan['loan_money']}</td>
-                                        <td>{$listLoan['loan_date']}</td>
-                                        <td>{$listLoan['status']}</td>
-                                        <td><button 
-                                            type='button' 
-                                            class='btn btn-outline-primary show_btn'
-                                            data-deadline='{$listLoan['deadline']}'
-                                            data-interest='{$listLoan['interest']}'
-                                            data-fname='{$listLoan['fname']}'
-                                            data-lname='{$listLoan['lname']}'
-                                            data-gender='{$listLoan['gender']}'
-                                            data-birthday='{$listLoan['birthday']}'
-                                            data-age='{$listLoan['age']}'
-                                            data-email='{$listLoan['email']}'
-                                            data-bank_name='{$listLoan['bank_name']}'
-                                            data-holder='{$listLoan['holder']}'
-                                            data-loan_money='{$listLoan['loan_money']}'
-                                            data-bank_number='{$listLoan['bank_number']}'
-                                            data-loan_id='{$listLoan['loan_id']}'
-                                        >Show Details</button></td>
-                                    </tr>";
+                            if(empty($allListLoan)){
+                                 $tableDisplay[] = "
+                                    <td colspan = '6'>No Loans Found.
+                                 </td>";
+                            }else{
+                                foreach ($allListLoan as $listLoan){
+                                    $tableDisplay[] = "
+                                        <tr>
+                                            <td>{$listLoan['full_name']}</td>
+                                            <td>{$listLoan['loan_money']}</td>
+                                            <td>{$listLoan['loan_date']}</td>
+                                            <td>{$listLoan['status']}</td>
+                                            <td><button 
+                                                type='button' 
+                                                class='btn btn-outline-primary show_btn'
+                                                data-deadline='{$listLoan['deadline']}'
+                                                data-interest='{$listLoan['interest']}'
+                                                data-fname='{$listLoan['fname']}'
+                                                data-lname='{$listLoan['lname']}'
+                                                data-gender='{$listLoan['gender']}'
+                                                data-birthday='{$listLoan['birthday']}'
+                                                data-age='{$listLoan['age']}'
+                                                data-email='{$listLoan['email']}'
+                                                data-bank_name='{$listLoan['bank_name']}'
+                                                data-holder='{$listLoan['holder']}'
+                                                data-loan_money='{$listLoan['loan_money']}'
+                                                data-bank_number='{$listLoan['bank_number']}'
+                                                data-loan_id='{$listLoan['loan_id']}'
+                                            >Show Details</button></td>
+                                        </tr>";
+                                }
                             }
+                            
 
                             $tableContent = implode("\n", $tableDisplay);
 

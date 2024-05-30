@@ -34,6 +34,11 @@
 
                         $tableDisplay = [];
 
+                        if(empty($allBills)){
+                            $tableDisplay[] = "
+                                <td colspan = '6'>No Savings Transaction.</td>
+                            ";
+                        }else{
                             foreach ($allBills as $listBills){
                                 $tableDisplay[] = "
                                     <tr>
@@ -58,6 +63,8 @@
                                             id = ''>Show Details</button></td>
                                     </tr>";
                             }
+                        }
+                            
 
                             $tableContent = implode("\n", $tableDisplay);
 
