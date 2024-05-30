@@ -1,18 +1,17 @@
 <?php 
 
     include_once "../template/sidebarUser.php";
-
     include_once "../../controller/db_connector.php";
     include_once "../../model/user_model.php";
 
     $getNotif = new Register();
 
 ?>
-    </div>
 
-            <div class = "loanContent">
+        </div>
+        <div class = "loanContent">
                 <div class = "titleLoan">
-                    <h1>NOTIFICATIONS</h1>
+                    <h1>Billings</h1>
                 </div>
 
                 <div class = "loanTableContainer">
@@ -28,26 +27,23 @@
                         <tbody>
                             <?php 
 
-                                $allNotif = $getNotif->getNotif();
+                                $allNotif = $getNotif->getNotifSpecific();
 
                                 $tableDisplay = [];
 
-                                
-                                if(empty($allNotif)){
+                                if (empty($allNotif)) {
                                     $tableDisplay[] = "
-                                        <tr>
-                                            <td colspan = '6'>No Notification</td>
-                                        </tr>";
+                                        <td colspan = '6'>No Billings Found</td>";
                                 }else{
                                     foreach ($allNotif as $notifs){
                                     $tableDisplay[] = "
                                         <tr>
                                             <td>{$notifs['type']}</td>
-                                            <td>{$notifs['total_payment']}</td>
-                                            <td>{$notifs['deadline']}</td>
+                                            <td>{$notifs['monthly']}</td>
+                                            <td>{$notifs['monthly_deadline']}</td>
                                             <td>{$notifs['status']}</td>
-                                        </tr>";
-                                    }
+                                    </tr>";
+                                }
                                 }
                                 
 

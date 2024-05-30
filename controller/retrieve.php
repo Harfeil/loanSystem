@@ -30,6 +30,7 @@
                         }
 
                         $_SESSION["user_id"] = $row["id"];
+                        $_SESSION["role"] = $row["role"] ;
                         $_SESSION["account_type"] = $row["account_type"];
                         
                     }else {

@@ -18,4 +18,6 @@
             $transaction = $loan->transaction($_POST, $type);
         }
     }
+
+   
 ?>

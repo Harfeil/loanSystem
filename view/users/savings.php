@@ -24,10 +24,17 @@
 
                         $tableDisplay = [];
 
-                        foreach ($allNotif as $notifs){
+                        
+                        if (empty($allNotif)) {
+                            $tableDisplay[] = "
+                                 <h1 id = 'savingMoneyDisplay'>0.00</h1>";
+                        } else{
+                            foreach ($allNotif as $notifs){
                             $tableDisplay[] = "
                                 <h1 id = 'savingMoneyDisplay'>{$notifs['savings']}php</h1>";
+                            }
                         }
+                        
 
                         $tableContent = implode("\n", $tableDisplay);
                     ?>

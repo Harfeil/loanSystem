@@ -1,12 +1,11 @@
 <?php 
-
     include_once "../template/sidebarUser.php";
 
     include_once "../../model/user_model.php";
     
     require_once "../../controller/db_connector.php";
-
     $allLoan = new Register();
+
 
 ?>
     </div>
@@ -28,11 +27,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
+                    <?php
+                    
+                    echo $_SESSION["message"];
+                    
                     $allLoans = $allLoan->getLoans();
                     $tableDisplay = [];
 
-                    foreach ($allLoans as $loans){
+                    if(empty($allLoans)){
+                        $tableDisplay[] = "
+                            <tr>
+                                <td colspan = '6'>No Loans Found.</td>
+                            </tr>";
+                    }else{
+                        foreach ($allLoans as $loans){
                         $tableDisplay[] = "
                             <tr>
                                 <td>{$loans['fullname']}</td>
@@ -40,7 +48,9 @@
                                 <td>{$loans['loan_date']}</td>
                                 <td>{$loans['status']}</td>
                             </tr>";
+                        }
                     }
+                    
 
                     $tableContent = implode("\n", $tableDisplay);
 
@@ -109,10 +119,15 @@
                     <input type="text" id="inputNumberLoan" placeholder="Enter loan amount 5000 - 10000" name = "numberOfAmount"><br><br>
                     <label for="">Set Due Date</label>
                     <select name="month_select" id="month_select">
-                        <option value="1">1 Month</option>
-                        <option value="3">3 Months</option>
-                        <option value="6">6 Months</option>
-                        <option value="12">12 Months</option>
+                        <?php
+                        
+                            $month_options = $allLoan->getMonthOption();
+
+                            foreach ($month_options as $option) {
+                                echo '<option value="' . $option . '">' . $option . ' Months</option>';
+                            }
+
+                        ?>
                     </select>
                     <p id = "errorLoanDisplay"></p><br><br><br>
                     <button type="submit" name = "submitAmount"  class = "btn btn-primary" id = "submitLoanAmount">Submit</button>

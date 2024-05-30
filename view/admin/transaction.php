@@ -33,16 +33,26 @@
 
                             $tableDisplay = [];
 
-                            foreach ($transactions as $trans){
+                            if(empty($transactions)){
                                 $tableDisplay[] = "
-                                    <tr>
-                                        <td>{$trans['fullname']}</td>
-                                        <td>{$trans['type']}</td>
-                                        <td>{$trans['total_payment']}</td>
-                                        <td>{$trans['date']}</td>
-                                        <td>{$trans['status']}</td>
-                                    </tr>";
+                                
+                                    <td colspan = '6'>No Transaction Found.</td>
+                                
+                                ";
+                            }else{
+                                foreach ($transactions as $trans){
+                                    $tableDisplay[] = "
+                                        <tr>
+                                            <td>{$trans['fullname']}</td>
+                                            <td>{$trans['type']}</td>
+                                            <td>{$trans['total_payment']}</td>
+                                            <td>{$trans['date']}</td>
+                                            <td>{$trans['status']}</td>
+                                        </tr>";
+                                }
                             }
+
+                            
 
                             $tableContent = implode("\n", $tableDisplay);
 
