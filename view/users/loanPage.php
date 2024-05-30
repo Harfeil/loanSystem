@@ -31,7 +31,7 @@
                     
                     echo $_SESSION["message"];
                     
-                    $allLoans = $allLoan->getLoans();
+                    $allLoans = $allLoan->getLoansSpecific();
                     $tableDisplay = [];
 
                     if(empty($allLoans)){

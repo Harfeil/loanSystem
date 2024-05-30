@@ -208,6 +208,30 @@
             return $loanData;
         }
 
+        public function getLoansSpecific(){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT CONCAT(user_tbl.fname, ' ', user_tbl.lname) as fullname, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY loan_tbl.loan_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $totalPayment = $row["interest"] + $row["loan_money"];
+                    $loanData[] = [
+                        'fullname' => $row["fullname"],
+                        'loan_money' => $row["loan_money"],
+                        'loan_date' => $row["loan_date"],
+                        'total_payment' => $totalPayment,
+                        'deadline' => $row["deadline"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $loanData = "";
+            }
+
+            return $loanData;
+        }
+
         public function getNotif(){
             $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY transaction_table.t_id DESC";
 
@@ -236,8 +260,65 @@
             return $notifications;
         }
 
+        public function getSpecificNotif(){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY transaction_table.t_id DESC";
+
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $totalPayment = $row["money"] - $row["interest"];
+                    $notifications[] = [
+                        'trans_id' => $row["trans_id"],
+                        'type' => $row["type"],
+                        'status' => $row["status"],
+                        'money' => $row["money"],
+                        'monthly' => $row["total_monthly"],
+                        'monthly_deadline' => $row["monthly_deadline"],
+                        'total_payment' => $totalPayment,
+                        'interest' => $row["interest"],
+                        'full_name' => $row["full_name"],
+                        'deadline' => $row["deadline"]
+                    ];
+                }
+            }else{
+                $notifications = "";
+            }
+
+            return $notifications;
+        }
+
         public function getNotifSpecific(){
             $id = $_SESSION["user_id"];
+            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY transaction_table.t_id DESC";
+
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $totalPayment = $row["money"] - $row["interest"];
+                    $notifications[] = [
+                        'trans_id' => $row["trans_id"],
+                        'type' => $row["type"],
+                        'status' => $row["status"],
+                        'money' => $row["money"],
+                        'monthly' => $row["total_monthly"],
+                        'monthly_deadline' => $row["monthly_deadline"],
+                        'total_payment' => $totalPayment,
+                        'interest' => $row["interest"],
+                        'full_name' => $row["full_name"],
+                        'deadline' => $row["deadline"]
+                    ];
+                }
+            }else{
+                $notifications = "";
+            }
+
+            return $notifications;
+        }
+
+        public function getSpecificBills($id){
             $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY transaction_table.t_id DESC";
 
             $result = $this->db->retrieve($sql);
@@ -624,7 +705,7 @@
         }
 
         public function getListLoan(){
-            $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.deadline_days as deadline_days, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
+            $sql = "SELECT user_tbl.id as user_id, user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.deadline_days as deadline_days, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY loan_tbl.loan_id DESC";
             $result = $this->db->retrieve($sql);
 
             if ($result) {
@@ -632,6 +713,7 @@
                     $fullname = $row["fname"] . " " . $row["lname"];
                     $loanlist[] = [
                         'full_name' => $fullname,
+                        'user_id' => $row["user_id"],
                         'fname' => $row["fname"],
                         'lname' => $row["lname"],
                         'gender' => $row["gender"],

@@ -40,7 +40,14 @@
                 }
             }
 
+            if(isset($_POST['data'])) {
+                $value = $_POST['data'];
+                // You can now use $value in PHP
+                $_SESSION["specific_id"] = $value;
+            }
+
         }
+
 
 
     }
