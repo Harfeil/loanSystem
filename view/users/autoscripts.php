@@ -11,4 +11,9 @@
     
     $disable = $getDeadline->getDeadline();
 
+    $penalty = $getDeadline->getPenalty();
+
+    $deleteAccount = $getDeadline->getAccountIssue();
+    
+    $premium_accounts = $getDeadline->divideIncome();
 ?>

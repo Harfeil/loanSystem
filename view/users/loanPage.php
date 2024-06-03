@@ -17,6 +17,12 @@
         </div>
 
         <div class = "loanTableContainer">
+            <?php
+            
+                $message = $_SESSION["loan_error_message"];
+                echo $message;
+
+            ?>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -24,13 +30,11 @@
                         <th scope="col">Loan Amount</th>
                         <th scope="col">Loan Date</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Note</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    
-                    echo $_SESSION["message"];
-                    
                     $allLoans = $allLoan->getLoansSpecific();
                     $tableDisplay = [];
 
@@ -41,12 +45,18 @@
                             </tr>";
                     }else{
                         foreach ($allLoans as $loans){
+                            if(empty($loans['note'])){
+                                $display_note = "None";
+                            }else{
+                                $display_note = $loans['note'];
+                            }
                         $tableDisplay[] = "
                             <tr>
                                 <td>{$loans['fullname']}</td>
                                 <td>{$loans['loan_money']}</td>
                                 <td>{$loans['loan_date']}</td>
                                 <td>{$loans['status']}</td>
+                                <td>$display_note</td>
                             </tr>";
                         }
                     }
@@ -120,10 +130,10 @@
                     <label for="">Set Due Date</label>
                     <select name="month_select" id="month_select">
                         <?php
-                        
+
                             $month_options = $allLoan->getMonthOption();
 
-                            foreach ($month_options as $option) {
+                            foreach ($_SESSION["my_months"] as $option) {
                                 echo '<option value="' . $option . '">' . $option . ' Months</option>';
                             }
 

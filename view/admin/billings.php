@@ -1,154 +1,187 @@
-<?php 
+<?php
+include_once "../../controller/db_connector.php";
+include_once "../../model/user_model.php";
 
-    include_once "../template/sidebar.php";
+$getNotif = new Register();
 
-    include_once "../../controller/db_connector.php";
-    include_once "../../model/user_model.php";
+session_start();
 
-    $getNotif = new Register();
+// Check if it's a POST request and 'month' and 'year' are set
+if ($_SERVER['REQUEST_METHOD'] === 'POST' || isset($_POST['month']) || isset($_POST['year'])) {
+    $month = $_POST['month'];
+    $year = $_POST['year'];
 
-    session_start();
+   if (!empty($month) && !empty($year)) {
+        $allListLoan = $getNotif->getAcceptedLoanFilter($month, $year);
+    } elseif (!empty($month)) {
+        $allListLoan = $getNotif->getAcceptedLoanFilterMonth($month);
+    } elseif (!empty($year)) {
+        $allListLoan = $getNotif->getAcceptedLoanFilterYear($year);
+    } else if (empty($month) && empty($year)) {
+        $allListLoan = $getNotif->getAcceptedLoan();
+    }
 
+    if (empty($allListLoan)) {
+        echo "<td colspan='5'>No Loans Found.</td>";
+    } else {
+        foreach ($allListLoan as $listLoan) {
+            echo "
+            <tr>
+                <td>{$listLoan['full_name']}</td>
+                <td>{$listLoan['loan_money']}</td>
+                <td>{$listLoan['loan_date']}</td>
+                <td>{$listLoan['status']}</td>
+                <td>
+                    <button type='button' class='btn btn-outline-primary show_btn_details' data-loan_id='{$listLoan['loan_id']}'>Show Details
+                    </button>
+                </td>
+            </tr>";
+        }
+    }
+    exit();
+}
 ?>
-    </div>
 
-            <div class = "loanContent">
-                <div class = "titleLoan">
-                    <h1>Billings</h1>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../model/loanmyloancss.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div class="mainDash">
+        <div class="sideBar">
+            <br>
+            <h1>Loan System</h1>
+            <br><br>
+            <ul class="list-group links">
+                <li class="goLinks"><a id="linkColor" href="../admin/dashboard.php"> <img id="linkColor" height="30px" width="30px" src="../../model/upload/dashboard.png" alt=""> Dashboard</a></li>
+                <li class="goLinks"><img height="30px" width="30px" src="../../model/upload/loan.png" alt=""> <a href="../admin/listloan.php">Loans</a></li>
+                <li class="goLinks"><img height="30px" width="30px" src="../../model/upload/users.png" alt=""> <a href="../admin/viewRegister.php">Users</a></li>
+                <li class="goLinks"><img height="30px" width="30px" src="../../model/upload/users.png" alt=""> <a href="../admin/billings.php">Billings</a></li>
+                <li class="goLinks"><img height="30px" width="30px" src="../../model/upload/withdraw.png" alt=""> <a href="../admin/saving_transaction.php">Savings</a></li>
+                <li class="goLinks"><img height="30px" width="30px" src="../../model/upload/transactionIcon.png" alt=""> <a href="../admin/total_company.php">Company Income</a></li>
+            </ul>
+        </div>
+        <div class="loanContent">
+            <div class="titleLoan">
+                <h1>Billings</h1>
+                <select name="months" id="months">
+                    <option value="">This Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select name="years" id="years">
+                    <option value="">This Year</option>
+                    <?php
+                    $startYear = 2000;
+                    $endYear = date("Y");
 
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Full Name</th>
-                            <th scope="col">Loan Amount</th>
-                            <th scope="col">Loan Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    
-                        <?php 
-                        
-                            $allListLoan = $getNotif->getListLoan();
-
-                            $tableDisplay = [];
-                                if(empty($allListLoan)){
-                                    $tableDisplay[] = "
-                                        <td colspan = '6'>No Loans Found.
-                                    </td>";
-                                }else{
-                                    foreach ($allListLoan as $listLoan){
-                                        $tableDisplay[] = "
-                                            <tr>
-                                                <td>{$listLoan['full_name']}</td>
-                                                <td>{$listLoan['loan_money']}</td>
-                                                <td>{$listLoan['loan_date']}</td>
-                                                <td>{$listLoan['status']}</td>
-                                                <td><button 
-                                                    type='button' 
-                                                    class='btn btn-outline-primary show_btn'
-                                                    data-deadline='{$listLoan['deadline']}'
-                                                    data-user_id='{$listLoan['user_id']}'
-                                                    data-interest='{$listLoan['interest']}'
-                                                    data-fname='{$listLoan['fname']}'
-                                                    data-lname='{$listLoan['lname']}'
-                                                    data-gender='{$listLoan['gender']}'
-                                                    data-birthday='{$listLoan['birthday']}'
-                                                    data-age='{$listLoan['age']}'
-                                                    data-email='{$listLoan['email']}'
-                                                    data-bank_name='{$listLoan['bank_name']}'
-                                                    data-holder='{$listLoan['holder']}'
-                                                    data-loan_money='{$listLoan['loan_money']}'
-                                                    data-bank_number='{$listLoan['bank_number']}'
-                                                    data-loan_id='{$listLoan['loan_id']}' onclick = 'sendDataToPHP({$listLoan['user_id']})'
-                                                >Show Details</button></td>
-                                            </tr>";
-                                    }
-                                }
-                                
-
-                                $tableContent = implode("\n", $tableDisplay);
-
-                            ?>
-
-                            <?php echo $tableContent; ?>
-
-                        </tbody>
-                    </table>
-
-                <div id="popupForm" class="popup-details">
-                    <div class = "loanTableContainer">
-                    <img id = "closeImage" src="../../model/upload/close.png" alt="" width = "30px" height = "30px">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Full Name</th>
-                                    <th scope="col">Transaction Type</th>
-                                    <th scope="col">Total Payment</th>
-                                    <th scope="col">Due Date</th>
-                                    <th scope="col">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                    $specific_id = $_SESSION["specific_id"];
-
-                                    echo $specific_id;
-                                    $allNotif = $getNotif->getSpecificBills($specific_id);
-
-                                    $tableDisplay = [];
-
-                                    if (empty($allNotif)) {
-                                        $tableDisplay[] = "
-                                            <td colspan = '6'>No Billings Found</td>";
-                                    }else{
-                                        foreach ($allNotif as $notifs){
-                                        $tableDisplay[] = "
-                                            <tr>
-                                                <td>{$notifs['full_name']}</td>
-                                                <td>{$notifs['type']}</td>
-                                                <td>{$notifs['monthly']}</td>
-                                                <td>{$notifs['monthly_deadline']}</td>
-                                                <td>{$notifs['status']}</td>
-                                            </tr>";
-                                        }
-                                    }
-                                    
-
-                                    $tableContent = implode("\n", $tableDisplay);
-                                ?>
-                                <?php echo $tableContent; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                
+                    for ($year = $startYear; $year <= $endYear; $year++) {
+                        echo "<option value=\"$year\">$year</option>";
+                    }
+                    ?>
+                </select>
             </div>
-
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Loan Amount</th>
+                        <th scope="col">Loan Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="result">
+                    <?php
+                    $allListLoan = $getNotif->getAcceptedLoan();
+                    if(empty($allListLoan)){
+                        echo "<td colspan='5'>No Loans Found.</td>";
+                    } else {
+                        foreach ($allListLoan as $listLoan){
+                            echo "
+                            <tr>
+                                <td>{$listLoan['full_name']}</td>
+                                <td>{$listLoan['loan_money']}</td>
+                                <td>{$listLoan['loan_date']}</td>
+                                <td>{$listLoan['status']}</td>
+                                <td>
+                                    <button type='button' class='btn btn-outline-primary show_btn'
+                                    data-loan_id='{$listLoan['loan_id']}'>Show Details
+                                    </button>
+                                </td>
+                            </tr>";
+                        }
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
     </div>
-
     <script>
-         function sendDataToPHP(value) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '../../controller/retrieve.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    console.log(xhr.responseText); // Log response from PHP
-                    // Handle the response from PHP if needed
-                }
-            };
-            xhr.send('data=' + encodeURIComponent(value)); // Sending data to PHP
-            
-            popupForm.style.display = "block";
-        }
+       document.addEventListener('DOMContentLoaded', function() {
+            function attachEventListeners() {
+                let showBtn = document.querySelectorAll('.show_btn');
+                showBtn.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        let id = this.getAttribute("data-loan_id");
+                        window.location.href = "show_billings.php?id=" + id;
+                    });
+                });
 
-        closeImage.addEventListener("click", function(){
-            popupForm.style.display = "none";
+                let show_btn_details = document.querySelectorAll('.show_btn_details');
+                show_btn_details.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        let id = this.getAttribute("data-loan_id");
+                        window.location.href = "show_billings.php?id=" + id;
+                    });
+                });
+            }
+
+            attachEventListeners();
+
+            var monthSelect = document.getElementById('months');
+            var yearSelect = document.getElementById('years');
+
+            monthSelect.addEventListener('change', sendAjaxRequest);
+            yearSelect.addEventListener('change', sendAjaxRequest);
+
+            function sendAjaxRequest() {
+                var month = monthSelect.value;
+                var year = yearSelect.value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            document.getElementById('result').innerHTML = xhr.responseText;
+                            attachEventListeners();  // Reattach event listeners after updating the loan list
+                        } else {
+                            console.error('There was a problem with the request.');
+                        }
+                    }
+                };
+
+                var data = "month=" + encodeURIComponent(month) + "&year=" + encodeURIComponent(year);
+                xhr.send(data);
+            }
         });
     </script>
 </body>

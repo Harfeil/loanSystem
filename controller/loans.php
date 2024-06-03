@@ -16,7 +16,15 @@
         if(isset($_POST["confirmLoan"])){
             $type = "Loan";
             $transaction = $loan->transaction($_POST, $type);
+
+            
+            header("Location: ../view/admin/listloan.php");
         }
+
+        if(isset($_POST["status"])){
+            $transaction = $loan->updateBillingStatus($_POST);
+        }
+        
     }
 
    

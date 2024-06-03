@@ -28,7 +28,7 @@
                         <tbody>
                             <?php 
 
-                                $allNotif = $getNotif->getSpecificNotif();
+                                $allNotif = $getNotif->getNotif();
 
                                 $tableDisplay = [];
 

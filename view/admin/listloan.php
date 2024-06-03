@@ -138,8 +138,20 @@
                         <input type="text" id = "interest_display" name = "interest" hidden>
                         <input type="text" id = "date_display" name = "date_deadline" hidden>
                         <input type="text" id = "id_display" name = "id_display" hidden>
-                        <input required="" placeholder="Enter Loan" type="text" class="input" name = "loanAmount"><br><br>
+                        <input placeholder="Enter Loan" type="text" class="input" name = "loanAmount"><br><br>
                         <button type="submit" name = "confirmLoan" class="btn btn-outline-primary">Confirm</button>
+                    </form>
+                    
+                    <button type="submit" name = "" class="btn btn-outline-danger" id = "rejectBtn">Reject</button>
+
+                    <form action="../../controller/registration.php" method = "POST">
+                        
+                        <div class = "reasonContainer" id = "reasonContainer">
+                            <h5>Provide Reason</h5>
+                            <input type="number" id = "loan_id_display" name = "loan_id" hidden>
+                            <input type="text" name = "reason" required><br>
+                            <button type="submit" id = "comfirmReason" name = "rejectLoan" class="btn btn-outline-primary">Confirm Reject</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -152,6 +164,12 @@
 
         let details_container = document.getElementById("popupForm");
         let close = document.getElementById("closeImage");
+        let rejectBtn = document.getElementById("rejectBtn");
+        let reasonContainer = document.getElementById("reasonContainer");
+
+        rejectBtn.addEventListener("click", function(){
+            reasonContainer.style.display = "block";
+        });
 
         close.addEventListener("click", function(){
             details_container.style.display = "None";
@@ -189,7 +207,9 @@
                     let id_display_input  = document.getElementById("id_display");
                     let date_display_input  = document.getElementById("date_display");
                     let interest_display_input  = document.getElementById("interest_display");
+                    let loan_id_display  = document.getElementById("loan_id_display");
 
+                    loan_id_display.value = loan_id;
                     interest_display_input.value = interest;
                     date_display_input.value = deadline;
                     fname_input.textContent = fname;

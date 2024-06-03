@@ -69,8 +69,7 @@
             move_uploaded_file($bill_temp, $upload_dir . $proofBill);
             move_uploaded_file($id_temp, $upload_dir . $proofId);
             move_uploaded_file($coe_temp, $upload_dir . $proofCoe);
-            $sql = "INSERT INTO user_tbl (fname, lname, gender,birthday, age, email, bank_name, bank_number, holder_name, tin_num, com_name, com_address, com_num, position, earning, proof_bill, proof_id, proof_coe, password, role, account_type, is_blocked, is_valid, status) VALUES ('$fname', '$lname', '$gender', '$birthday', '$age', '$email', '$bankName', '$bankAccNum', '$holderName', '$tinNum', '$comName', '$comAddress', '$comNum',  '$position', '$earning', '$upload_bill', '$upload_ID', '$upload_Coe', '$hashedpassword', '$role', '$accountType', '$is_blocked', '$is_valid', '$status')";
-
+            $sql = "INSERT INTO user_tbl (fname, lname, gender,birthday, age, email, bank_name, bank_number, holder_name, tin_num, com_name, com_address, com_num, position, earning, proof_bill, proof_id, proof_coe, password, role, account_type, is_blocked, is_valid, status, max_loan, max_months) VALUES ('$fname', '$lname', '$gender', '$birthday', '$age', '$email', '$bankName', '$bankAccNum', '$holderName', '$tinNum', '$comName', '$comAddress', '$comNum',  '$position', '$earning', '$upload_bill', '$upload_ID', '$upload_Coe', '$hashedpassword', '$role', '$accountType', '$is_blocked', '$is_valid', '$status', '10000', '12')";
 
             $result = $this->db->insert($sql);
 
@@ -96,6 +95,31 @@
             $earning = $_POST["earning"];
 
             $sql = "UPDATE user_tbl SET fname = '$fname', lname = '$lname', gender = '$gender', birthday = '$birthday', age = '$age', email = '$email', bank_name = '$bankName', bank_number = '$bankAccNum', holder_name = '$holderName', tin_num = '$tinNum', com_name = '$comName', com_address = '$comAddress', com_num = '$comNum', position = '$position', earning = '$earning' WHERE id = '$id'";
+
+            $result = $this->db->update($sql);
+        }
+
+        public function updateUserFromAdmin($data, $file){
+            
+            $id = $_POST["user_id"];
+            $fname = $_POST["f_name"];
+            $lname = $_POST["l_name"];
+            $gender = $_POST["gender"];
+            $birthday = $_POST["birthday"];
+            $age = $_POST["age"];
+            $email = $_POST["email"];
+            $bankName = $_POST["bank_name"];
+            $bankAccNum = $_POST["bank_number"];
+            $holderName = $_POST["holder_name"];
+            $tinNum = $_POST["tin_id"];
+            $comName = $_POST["company_name"];
+            $comAddress = $_POST["company_address"];
+            $comNum = $_POST["company_number"];
+            $position = $_POST["position"];
+            $earning = $_POST["earning"];
+            $account_type = $_POST["accountSelect"];
+
+            $sql = "UPDATE user_tbl SET account_type = '$account_type', fname = '$fname', lname = '$lname', gender = '$gender', birthday = '$birthday', age = '$age', email = '$email', bank_name = '$bankName', bank_number = '$bankAccNum', holder_name = '$holderName', tin_num = '$tinNum', com_name = '$comName', com_address = '$comAddress', com_num = '$comNum', position = '$position', earning = '$earning' WHERE id = '$id'";
 
             $result = $this->db->update($sql);
         }
@@ -132,6 +156,7 @@
                         'proof_id' => $row["proof_id"],
                         'proof_coe' => $row["proof_coe"],
                         'account_type' => $row["account_type"],
+                        'is_blocked' => $row["is_blocked"],
                         'status' => $row["status"]
                     ];
                 }
@@ -210,7 +235,7 @@
 
         public function getLoansSpecific(){
             $id = $_SESSION["user_id"];
-            $sql = "SELECT CONCAT(user_tbl.fname, ' ', user_tbl.lname) as fullname, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY loan_tbl.loan_id DESC";
+            $sql = "SELECT CONCAT(user_tbl.fname, ' ', user_tbl.lname) as fullname, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.status as status, loan_tbl.note as note FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY loan_tbl.loan_id DESC";
             $result = $this->db->retrieve($sql);
 
             if ($result) {
@@ -222,7 +247,8 @@
                         'loan_date' => $row["loan_date"],
                         'total_payment' => $totalPayment,
                         'deadline' => $row["deadline"],
-                        'status' => $row["status"]
+                        'status' => $row["status"],
+                        'note' => $row["note"]
                     ];
                 }
             }else{
@@ -318,14 +344,17 @@
             return $notifications;
         }
 
-        public function getSpecificBills($id){
-            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE user_tbl.id = '$id' ORDER BY transaction_table.t_id DESC";
+        public function getSpecificBills($specific_id){
+            $sql = "SELECT transaction_table.t_id as trans_id, transaction_table.t_type as type, transaction_table.status as status, loan_tbl.loan_money as money, loan_tbl.total_payment as total_payment_loan, transaction_table.total_payment as total_monthly, transaction_table.due_date as monthly_deadline, loan_tbl.with_interest as interest, loan_tbl.deadline as deadline, transaction_table.loan_id as loan_id, CONCAT(user_tbl.fname, ' ', user_tbl.lname) as full_name, transaction_table.penalty as penalty, transaction_table.date as date FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE loan_tbl.loan_id = '$specific_id'";
 
             $result = $this->db->retrieve($sql);
 
-            if ($result) {
+            $currentDate = date("Y-m-d");
+
+            if($result) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     $totalPayment = $row["money"] - $row["interest"];
+                    $total_money = $row["total_monthly"];
                     $notifications[] = [
                         'trans_id' => $row["trans_id"],
                         'type' => $row["type"],
@@ -336,6 +365,9 @@
                         'total_payment' => $totalPayment,
                         'interest' => $row["interest"],
                         'full_name' => $row["full_name"],
+                        'penalty' => $row["penalty"],
+                        'loan_id' => $row["loan_id"],
+                        'total_payment_loan' => $row["total_payment_loan"],
                         'deadline' => $row["deadline"]
                     ];
                 }
@@ -354,13 +386,42 @@
             return $result;
         }
 
+        public function updateStatusReject($data){
+
+            $status = $_POST["status_rejected"];
+            $id = $_POST["userId"];
+
+            $currentDate = new DateTime();
+
+            $currentDate->modify('+1 month');
+
+            $formattedDate = $currentDate->format('Y-m-d');
+
+            $sql = "UPDATE user_tbl SET status = '$status', issue_days = '$formattedDate' WHERE id = '$id'";
+            $result = $this->db->insert($sql);
+        }
+
         public function updateStatus($data){
 
             $status = $_POST["status"];
             $id = $_POST["userId"];
 
+            $currentDate = new DateTime();
 
-            $sql = "UPDATE user_tbl SET status = '$status' WHERE id = '$id'";
+            $currentDate->modify('+1 month');
+
+            $formattedDate = $currentDate->format('Y-m-d');
+
+            $sql = "UPDATE user_tbl SET status = '$status', issue_days = '$formattedDate' WHERE id = '$id'";
+            $result = $this->db->insert($sql);
+        }
+
+        public function updateStatusBlock($data, $id){
+
+            $status = $_POST["status_blocked"];
+
+
+            $sql = "UPDATE user_tbl SET is_blocked = '$status' WHERE id = '$id'";
             $result = $this->db->insert($sql);
         }
 
@@ -384,7 +445,22 @@
             $id = $_SESSION["user_id"];
             $currentDate = date("Y-m-d");
 
-            $_SESSION["message"] = "";
+            $sqlGetLoan = "SELECT * FROM user_tbl WHERE id = '$id'";
+
+            $resulGetLoan = $this->db->retrieve($sqlGetLoan);
+
+            if ($resulGetLoan) {
+                if ($row = mysqli_fetch_assoc($resulGetLoan)) {
+                    $max_loan = $row["max_loan"];
+                }
+            }
+
+            if($total_loans >= $max_loan){
+                $error = false;
+                $_SESSION["loan_error_message"] = "You can only loan $max_loan at once";
+            }
+
+            $_SESSION["loan_error_message"] = "";
             function isValidWholeThousand($number) {
                 // Define the regex pattern for a whole thousand
                 $pattern = '/^[1-9][0-9]*000$/';
@@ -394,15 +470,15 @@
 
             if(isValidWholeThousand($money)){
                 $error = false;
-                $_SESSION["message"] = "";
+                $_SESSION["loan_error_message"] = "";
             }else{
                 $error = true;
-                $_SESSION["message"] = "Your money must be a whole thousand";
+                $_SESSION["loan_error_message"] = "Your money must be a whole thousand";
             }
 
-            if($money < 5000 || $money > 10000){
+            if($money < 5000 || $money > $max_loan){
                 $error = true;
-                $_SESSION["message"] = "Your money must be greater than 5000 or equal 10000";
+                $_SESSION["loan_error_message"] = "Your money must be greater than 5000 or equal 10000";
             }
 
             $sqlUser = "SELECT * FROM user_tbl WHERE id = '$id '";
@@ -416,8 +492,8 @@
                 }
             }
 
-            if($total_loan >= 10000){
-                $_SESSION["message"] = "Your have reached the maximum amount to loan";
+            if($total_loan >= $max_loan){
+                $_SESSION["loan_error_message"] = "Your have reached the maximum amount to loan";
                 $error = true;
             }
 
@@ -426,12 +502,11 @@
                 $floatValue = floatval($percentage);
                 $totalAmount = intval($money);
                 $totalInterest = $totalAmount * $floatValue;
-                $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline_days, user_id, status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$total_months', '$id', 'Pending')";
-            
-                $_SESSION["message"] = "Loan Successfully";
+                $sql = "INSERT INTO loan_tbl (loan_money, with_interest, loan_date, deadline_days, user_id, status, max_loan, loan_status) VALUES ('$totalAmount', '$totalInterest', '$currentDate', '$total_months', '$id', 'Pending', 'Not Paid')";
+                
                 $result = $this->db->insert($sql);
+                
             }
-
         }
 
         public function minusDays(){
@@ -624,6 +699,24 @@
             return $savings;
         }
 
+        public function getTotalIncome(){
+            
+            $sql = "SELECT SUM(total_payment) as total_income FROM transaction_table WHERE status = 'Overdue' OR status = 'Completed'";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                if ($row = mysqli_fetch_assoc($result)) {
+                    $savings[] = [
+                        'total_income' => $row["total_income"]
+                    ];
+                }
+            }else{
+                $savings = "";
+            }
+
+            return $savings;
+        }
+
         public function getAllSavings(){
             $sql = "SELECT savings_tbl.s_id as s_id, savings_tbl.s_type as s_type, savings_tbl.s_amount as s_amount, savings_tbl.s_status as s_status, savings_tbl.s_date as s_date, user_tbl.bank_name as bank_name, user_tbl.bank_number as bank_number, user_tbl.total_savings as savings, CONCAT(user_tbl.fname, ' ' , user_tbl.lname) as full_name FROM savings_tbl INNER JOIN user_tbl ON savings_tbl.user_id = user_tbl.id ORDER BY s_id DESC";
             $result = $this->db->retrieve($sql);
@@ -649,7 +742,15 @@
             return $savings;
         }
 
-        
+        public function rejectLoan(){
+            $rejectNote = $_POST["reason"];
+            $loan_id = $_POST["loan_id"];
+
+            $sql =  $sql = "UPDATE loan_tbl SET status = 'Rejected', note = '$rejectNote' WHERE loan_id = '45'";
+            
+            $result = $this->db->insert($sql);
+
+        }
 
         public function transaction($data, $type){
             $id = $_SESSION["user_id"];
@@ -738,6 +839,150 @@
             return $loanlist;
         }
 
+        public function getAcceptedLoan(){
+            $currentMonth = date('m');
+            $sql = "SELECT user_tbl.id as user_id, user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, user_tbl.account_type as account_type, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.deadline_days as deadline_days, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE loan_tbl.status = 'Accepted' AND MONTH(loan_tbl.loan_date) = '$currentMonth' ORDER BY loan_tbl.loan_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $fullname = $row["fname"] . " " . $row["lname"];
+                    $loanlist[] = [
+                        'full_name' => $fullname,
+                        'user_id' => $row["user_id"],
+                        'account_type' => $row["account_type"],
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birthday' => $row["birthday"],
+                        'age' => $row["age"],
+                        'email' => $row["email"],
+                        'bank_number' => $row["bank_number"],
+                        'bank_name' => $row["bank_name"],
+                        'holder' => $row["holder"],
+                        'loan_id' => $row["loan_id"],
+                        'loan_money' => $row["loan_money"],
+                        'interest' => $row["interest"],
+                        'loan_date' => $row["loan_date"],
+                        'deadline' => $row["deadline_days"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $loanlist = "";
+            }
+
+            return $loanlist;
+        }
+
+        public function getAcceptedLoanFilter($month, $year){
+            $currentMonth = date('m');
+            $sql = "SELECT user_tbl.id as user_id, user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, user_tbl.account_type as account_type, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.deadline_days as deadline_days, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE loan_tbl.status = 'Accepted' AND MONTH(loan_tbl.loan_date) = '$month' AND YEAR(loan_tbl.loan_date) = '$year' ORDER BY loan_tbl.loan_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $fullname = $row["fname"] . " " . $row["lname"];
+                    $loanlist[] = [
+                        'full_name' => $fullname,
+                        'user_id' => $row["user_id"],
+                        'account_type' => $row["account_type"],
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birthday' => $row["birthday"],
+                        'age' => $row["age"],
+                        'email' => $row["email"],
+                        'bank_number' => $row["bank_number"],
+                        'bank_name' => $row["bank_name"],
+                        'holder' => $row["holder"],
+                        'loan_id' => $row["loan_id"],
+                        'loan_money' => $row["loan_money"],
+                        'interest' => $row["interest"],
+                        'loan_date' => $row["loan_date"],
+                        'deadline' => $row["deadline_days"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $loanlist = "";
+            }
+
+            return $loanlist;
+        }
+
+        public function getAcceptedLoanFilterMonth($month){
+            $currentYear = date('Y');
+            $sql = "SELECT user_tbl.id as user_id, user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, user_tbl.account_type as account_type, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.deadline_days as deadline_days, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE loan_tbl.status = 'Accepted' AND MONTH(loan_tbl.loan_date) = '$month' AND YEAR(loan_tbl.loan_date) = '$currentYear' ORDER BY loan_tbl.loan_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $fullname = $row["fname"] . " " . $row["lname"];
+                    $loanlist[] = [
+                        'full_name' => $fullname,
+                        'user_id' => $row["user_id"],
+                        'account_type' => $row["account_type"],
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birthday' => $row["birthday"],
+                        'age' => $row["age"],
+                        'email' => $row["email"],
+                        'bank_number' => $row["bank_number"],
+                        'bank_name' => $row["bank_name"],
+                        'holder' => $row["holder"],
+                        'loan_id' => $row["loan_id"],
+                        'loan_money' => $row["loan_money"],
+                        'interest' => $row["interest"],
+                        'loan_date' => $row["loan_date"],
+                        'deadline' => $row["deadline_days"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $loanlist = "";
+            }
+
+            return $loanlist;
+        }
+
+        public function getAcceptedLoanFilterYear($year){
+            $currentMonth = date('m');
+            $sql = "SELECT user_tbl.id as user_id, user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birthday, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_number as bank_number, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, user_tbl.account_type as account_type, loan_tbl.loan_id as loan_id, loan_tbl.loan_money as loan_money, loan_tbl.with_interest as interest, loan_tbl.loan_date as loan_date, loan_tbl.deadline as deadline, loan_tbl.deadline_days as deadline_days, loan_tbl.status as status FROM loan_tbl INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE YEAR(loan_tbl.loan_date) = '$year' AND MONTH(loan_tbl.loan_date) = '$currentMonth' AND loan_tbl.status = 'Accepted' ORDER BY loan_tbl.loan_id DESC";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $fullname = $row["fname"] . " " . $row["lname"];
+                    $loanlist[] = [
+                        'full_name' => $fullname,
+                        'user_id' => $row["user_id"],
+                        'account_type' => $row["account_type"],
+                        'fname' => $row["fname"],
+                        'lname' => $row["lname"],
+                        'gender' => $row["gender"],
+                        'birthday' => $row["birthday"],
+                        'age' => $row["age"],
+                        'email' => $row["email"],
+                        'bank_number' => $row["bank_number"],
+                        'bank_name' => $row["bank_name"],
+                        'holder' => $row["holder"],
+                        'loan_id' => $row["loan_id"],
+                        'loan_money' => $row["loan_money"],
+                        'interest' => $row["interest"],
+                        'loan_date' => $row["loan_date"],
+                        'deadline' => $row["deadline_days"],
+                        'status' => $row["status"]
+                    ];
+                }
+            }else{
+                $loanlist = "";
+            }
+
+            return $loanlist;
+        }
+
         public function getTransaction(){
             $sql = "SELECT user_tbl.fname as fname, user_tbl.lname as lname, user_tbl.gender as gender, user_tbl.birthday as birth, user_tbl.age as age, user_tbl.email as email, user_tbl.bank_name as bank_name, user_tbl.holder_name as holder, loan_tbl.loan_money as money, loan_tbl.deadline as deadline, loan_tbl.with_interest as interest, loan_tbl.total_payment as total_payment, loan_tbl.loan_id as loan_id, transaction_table.t_type as type, transaction_table.date as date, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id ORDER BY transaction_table.t_id DESC";
             $result = $this->db->retrieve($sql);
@@ -789,18 +1034,21 @@
         }
 
         public function getDeadline(){
-            $id = $_SESSION["user_id"];
-            $sql = "SELECT loan_tbl.user_id as user_id, loan_tbl.deadline as deadline, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id  WHERE transaction_table.status = 'Not Paid' AND user_id = '$id'";
+            $sql = "SELECT loan_tbl.user_id as user_id, loan_tbl.deadline as deadline, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id  WHERE transaction_table.status = 'Not Paid'";
 
             $result = $this->db->retrieve($sql);
 
             $currentDate = date("Y-m-d");
-
+            $deadline = "";
+            $id = "";
             if ($result) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     $deadline = $row["deadline"];
+                    $id = $row["user_id"];
                 }
             }
+
+
 
             if($currentDate > $deadline){
                 $user_status = "Disabled";
@@ -810,7 +1058,7 @@
                 $result = $this->db->update($sql);
             }
 
-
+            return $deadline;
         }
 
         public function praktisCron(){
@@ -820,13 +1068,208 @@
         }
 
         public function getMonthOption(){
-            if (!isset($_SESSION['options'])) {
-                $_SESSION['options'] = ['1', '3', '6', '12'];
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT * FROM user_tbl WHERE id = '$id'";
+            $result = $this->db->retrieve($sql);
+
+            if (!isset($_SESSION['my_array'])) {
+                // Initialize the session array if it doesn't exist
+                $_SESSION['my_array'] = [];
             }
 
-            return $_SESSION['options'];
+            if ($result) {
+                if ($row = mysqli_fetch_assoc($result)) {
+                    $total_months = $row["max_months"];
+                }
+            }
+
+            // while ($total_months > 0) {
+            //     $number -= 3;
+            //     $result = ($number <= 0) ? 1 : $number;
+            //     $_SESSION['my_array'][] = $result;
+            // }   
+
+            return $_SESSION['my_array'];
         }
 
+        public function getPenalty(){
+            $sql = "SELECT transaction_table.t_id as t_id, transaction_table.total_payment as total_payment, transaction_table.due_date as due_date, loan_tbl.total_payment as total_payment_loan, loan_tbl.loan_id as loan_id, transaction_table.status as status FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id WHERE transaction_table.status = 'Not Paid' OR transaction_table.status = 'Overdue'";
+            $result = $this->db->retrieve($sql);
+            $currentDateNow = date("Y-m-d");
+            $currentDate = new DateTime($currentDateNow);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $t_id = $row["t_id"];
+                    $payment = $row["total_payment"];
+                    $due_date = $row["due_date"];
+                    $loan_id = $row["loan_id"];
+                    $total_payment_loan = $row["total_payment_loan"];
+
+                    $sqlCount = "SELECT SUM(penalty) as penalties FROM transaction_table WHERE loan_id = '$loan_id'";
+                    $resultCount = $this->db->retrieve($sqlCount);
+                    if ($resultCount && $rowCount = $resultCount->fetch_assoc()) {
+                        $penalties = $rowCount["penalties"];
+                    } else {
+                        $penalties = 0;
+                    }
+                    $dueDateTime = new DateTime($due_date);
+                    if ($currentDate > $dueDateTime) {
+                        $total_penalty = 0.02 * $payment;
+                        $total_payment = $total_penalty + $payment;
+                        $updateSql = "UPDATE transaction_table SET penalty = '$total_penalty', total_payment = '$total_payment' WHERE t_id = '$t_id'";
+                        $this->db->update($updateSql);
+
+                        $new_total_payment = $total_payment_loan + $penalties;
+                        $updateSqlLoan = "UPDATE loan_tbl SET total_payment = '$new_total_payment' WHERE loan_id = '$loan_id'";
+                        $this->db->update($updateSqlLoan);
+                    }
+                }
+            }
+        }
+
+        public function updateBillingStatus($data){
+            $status_bills = $_POST["status"];
+            $t_id = $_POST["t_id"];
+            $sql = "UPDATE transaction_table SET status = '$status_bills' WHERE t_id = '$t_id'";
+
+            $result = $this->db->insert($sql);
+
+            $sqlUsers = "SELECT transaction_table.loan_id as loan_id, transaction_table.t_id as t_id, user_tbl.id as user_id, user_tbl.total_loan as total_loan, transaction_table.total_payment as payment, transaction_table.status as status, user_tbl.max_loan as max_loan, user_tbl.max_months as max_months FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE t_id = '$t_id'";
+
+            $resultusers = $this->db->retrieve($sqlUsers);
+
+            if ($resultusers) {
+                if ($row = mysqli_fetch_assoc($resultusers)) {
+                    $user_id = $row["user_id"];
+                    $total_loan = $row["total_loan"];
+                    $payment = $row["payment"];
+                    $status = $row["status"];
+                    $max_loan = $row["max_loan"];
+                    $max_months = $row["max_months"];
+                }
+            }
+
+            if($status_bills === "Completed"){
+                $new_max_loan = $max_loan + 5000;
+                $new_max_months = $max_months + 3;
+            }else{
+                $new_max_loan = $max_loan;
+                $new_max_months = $max_months;
+            }
+
+            if($new_max_loan >= 50000){
+                $new_max_loan = 50000;
+            }
+
+            if($new_max_months >= 32){
+                $new_max_months = 32;
+            }
+
+            if($status_bills === "Completed" || $status_bills === "Overdue"){
+                $over_all = $total_loan - $payment;
+
+                if($over_all < 0){
+                    $over_all = 0;
+                }
+
+                $sqlUpdateLoan = "UPDATE user_tbl SET total_loan = '$over_all', max_loan = '$new_max_loan', max_months = '$new_max_months' WHERE id = '$user_id'";
+
+                $resultLoan = $this->db->insert($sqlUpdateLoan);
+            }
+        }
+
+        public function getAccountIssue() {
+            $sql = "SELECT * FROM user_tbl WHERE status = 'Rejected'";
+            $result = $this->db->retrieve($sql);
+
+            if ($result === false) {
+                echo "Error retrieving data: " . $this->db->error;
+                return;
+            }
+            $current_date_now = date("Y-m-d");
+
+            $currentDate = new DateTime($current_date_now);
+
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $due_date = $row["issue_days"];
+                    $user_id = $row["id"];
+                    $dueDateTime = new DateTime($due_date);
+
+                    if ($currentDate >= $dueDateTime) {
+                        $sqlDelete = "DELETE FROM user_tbl WHERE id = ?";
+                        $result = $this->db->delete($sqlDelete, [$user_id]);
+
+                        if ($result) {
+                            echo "User with ID $user_id deleted successfully.<br>";
+                        } else {
+                            echo "Failed to delete user with ID $user_id.<br>";
+                        }
+                    }
+                }
+            } else {
+                echo "No users found in the database.";
+            }
+        }
+        
+
+        public function divideIncome(){
+            $sql = "SELECT SUM(total_payment) as total_income FROM transaction_table WHERE status = 'Overdue' OR status = 'Completed'";
+            $result = $this->db->retrieve($sql);
+
+            $sqlCountPrem = "SELECT COUNT(account_type) as total_premium FROM user_tbl WHERE account_type = 'Premium'";
+            $resultTotalPrem = $this->db->retrieve($sqlCountPrem);
+
+            $start_year = new DateTime("2024-06-03");
+            $new_year = clone $start_year;
+            $new_year->modify('+1 year');
+
+            if ($result) {
+                if ($row = mysqli_fetch_assoc($result)) {
+                    $total_income = $row["total_income"];
+                } else {
+                    $total_income = 0; 
+                }
+            } else {
+                $total_income = 0;
+            }
+
+            if ($resultTotalPrem) {
+                if ($row = mysqli_fetch_assoc($resultTotalPrem)) {
+                    $total_all_prem = $row["total_premium"];
+                } else {
+                    $total_all_prem = 0;
+                }
+            } else {
+                $total_all_prem = 0; 
+            }
+
+            $dateToCompare = new DateTime("2025-07-03");
+
+            if ($dateToCompare >= $start_year) {
+
+                $total_divide = ($total_income * 0.02) / $total_all_prem;
+
+                $sqlPrem = "SELECT * FROM user_tbl WHERE account_type = 'Premium'";
+                $resultPrem = $this->db->retrieve($sqlPrem);
+                if ($resultPrem) {
+                    while ($row = mysqli_fetch_assoc($resultPrem)) {
+                        $total_savings = $row["total_savings"] + $total_divide;
+                        $user_id = $row["id"];
+
+                        if ($total_savings >= 100000) {
+                            $total_savings = 100000;
+                        }
+
+                        $updateUser = "UPDATE user_tbl SET total_savings = '$total_savings' WHERE id = '$user_id'";
+                        $this->db->update($updateUser);
+                    }
+                }  
+            }
+
+            
+        }
     }
 
 ?>

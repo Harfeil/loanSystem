@@ -15,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../model/mycsscss.css">
+    <link rel="stylesheet" href="../model/loanmyloancss.css">
     <title>Document</title>
 </head>
 <body>
@@ -145,7 +145,7 @@
             <span>Confirm password</span>
         </label>
         <button class="submit" name = "addBtn">Submit</button>
-        <p class="signin">Already have an acount ? <a href="#">Signin</a> </p>
+        <p class="signin">Already have an acount ? <a href="login.php">Signin</a> </p>
     </form>
 
     <script>

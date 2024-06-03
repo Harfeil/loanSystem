@@ -14,7 +14,7 @@
         </div>
 
         <div class="billingsContainer">
-            <h1 id = "pageTitle">Billings</h1>
+            <h1 id = "pageTitle">Savings</h1>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>

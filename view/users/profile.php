@@ -10,6 +10,7 @@
     $allUsers = $getUsers->getSpecificUser();
 
     $tableDisplay = [];
+
 ?>
 
         </div>
@@ -33,7 +34,11 @@
                         </div>
 
                         <p id = 'personalDetail'>PERSONAL DETAILS</p>
-                        
+
+                        <h5>Account Type</h5>
+                        <h6>{$user['account_type']}</h6>
+                        <br>
+
                         <div class ='fullNameDisplay'>
                             <div class = 'firstName'>
                                 <h6>FIRST NAME</h6>

@@ -16,11 +16,14 @@
         if(isset($_POST["confirm_deposit"])){
             $type = "Deposit";
             $deposit = $deposit->updateSavings($_POST, $type);
+
+            header("Location: ../view/admin/saving_transaction.php");
         }
 
         if(isset($_POST["confirm_withdraw"])){
             $type = "Withdraw";
             $withdraw = $deposit->updateSavings($_POST, $type);
+            header("Location: ../view/admin/saving_transaction.php");
         }
     }
 
