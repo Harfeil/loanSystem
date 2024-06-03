@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 30, 2024 at 05:54 AM
+-- Generation Time: Jun 03, 2024 at 05:03 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -36,8 +36,18 @@ CREATE TABLE `loan_tbl` (
   `deadline_days` int(100) NOT NULL,
   `deadline` varchar(100) NOT NULL,
   `user_id` int(100) NOT NULL,
-  `status` varchar(100) NOT NULL
+  `status` varchar(100) NOT NULL,
+  `note` varchar(100) NOT NULL,
+  `loan_status` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `loan_tbl`
+--
+
+INSERT INTO `loan_tbl` (`loan_id`, `loan_money`, `with_interest`, `total_payment`, `loan_date`, `deadline_days`, `deadline`, `user_id`, `status`, `note`, `loan_status`) VALUES
+(44, 10000, 300, 10000, '2024-05-30', 336, '2025-05-01', 726, 'Accepted', '', 'Not Paid'),
+(45, 5000, 150, 0, '2024-05-30', 84, '', 727, 'Rejected', 'Didnt meet the requirements', 'Not Paid');
 
 -- --------------------------------------------------------
 
@@ -101,9 +111,28 @@ CREATE TABLE `transaction_table` (
   `t_type` varchar(110) NOT NULL,
   `loan_id` int(11) NOT NULL,
   `status` varchar(50) NOT NULL,
+  `penalty` double(10,2) NOT NULL,
   `due_date` date NOT NULL,
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transaction_table`
+--
+
+INSERT INTO `transaction_table` (`t_id`, `total_payment`, `t_type`, `loan_id`, `status`, `penalty`, `due_date`, `date`) VALUES
+(341, 833.33, 'Loan', 44, 'Overdue', 0.00, '2024-06-27', '2024-05-30'),
+(342, 833.33, 'Loan', 44, 'Completed', 0.00, '2024-07-25', '2024-05-30'),
+(343, 833.33, 'Loan', 44, 'Completed', 0.00, '2024-08-22', '2024-05-30'),
+(344, 833.33, 'Loan', 44, 'Completed', 0.00, '2024-09-19', '2024-05-30'),
+(345, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2024-10-17', '2024-05-30'),
+(346, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2024-11-14', '2024-05-30'),
+(347, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2024-12-12', '2024-05-30'),
+(348, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2025-01-09', '2024-05-30'),
+(349, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2025-02-06', '2024-05-30'),
+(350, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2025-03-06', '2024-05-30'),
+(351, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2025-04-03', '2024-05-30'),
+(352, 833.33, 'Loan', 44, 'Not Paid', 0.00, '2025-05-01', '2024-05-30');
 
 -- --------------------------------------------------------
 
@@ -134,12 +163,23 @@ CREATE TABLE `user_tbl` (
   `password` varchar(100) NOT NULL,
   `role` varchar(100) NOT NULL,
   `account_type` varchar(100) NOT NULL,
-  `is_blocked` int(100) NOT NULL,
+  `is_blocked` tinyint(1) NOT NULL,
   `is_valid` int(100) NOT NULL,
   `status` varchar(100) NOT NULL,
   `total_savings` double(10,2) NOT NULL,
-  `total_loan` double(10,2) NOT NULL
+  `total_loan` double(10,2) NOT NULL,
+  `issue_days` date NOT NULL,
+  `max_loan` int(50) NOT NULL,
+  `max_months` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_tbl`
+--
+
+INSERT INTO `user_tbl` (`id`, `fname`, `lname`, `gender`, `birthday`, `age`, `email`, `bank_name`, `bank_number`, `holder_name`, `tin_num`, `com_name`, `com_address`, `com_num`, `position`, `earning`, `proof_bill`, `proof_id`, `proof_coe`, `password`, `role`, `account_type`, `is_blocked`, `is_valid`, `status`, `total_savings`, `total_loan`, `issue_days`, `max_loan`, `max_months`) VALUES
+(726, 'harfeil', 'salmeron', 'Male', '2002-12-02', 21, 'harfeil@gmail.com', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', '../../model/upload/ads.png', '../../model/upload/ads.png', '../../model/upload/ads.png', '$2y$10$AE.zgGsgpILPWgfJgZnOwOUhFAVHHe3Jsvk7n44U.RNC.ONuj3NVC', 'User', 'Premium', 0, 0, 'Pending', 33.33, 6666.68, '0000-00-00', 25000, 24),
+(727, 'jeremy', 'carazo', 'Male', '2002-12-20', 21, 'jeremy@gmail.com', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', '../../model/upload/withdraw.png', '../../model/upload/users.png', '../../model/upload/transactionIcon.png', '$2y$10$CV2Wl15wg2kQ9zyDw2x9Mu5ds/ha0I8MIchuGLZLiMFeCHypV9Mne', 'User', 'Premium', 0, 0, 'Active', 33.33, 0.00, '0000-00-00', 10000, 15);
 
 --
 -- Indexes for dumped tables
@@ -186,7 +226,7 @@ ALTER TABLE `user_tbl`
 -- AUTO_INCREMENT for table `loan_tbl`
 --
 ALTER TABLE `loan_tbl`
-  MODIFY `loan_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `loan_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `praktis`
@@ -204,13 +244,13 @@ ALTER TABLE `savings_tbl`
 -- AUTO_INCREMENT for table `transaction_table`
 --
 ALTER TABLE `transaction_table`
-  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=337;
+  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=353;
 
 --
 -- AUTO_INCREMENT for table `user_tbl`
 --
 ALTER TABLE `user_tbl`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=726;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=732;
 
 --
 -- Constraints for dumped tables
