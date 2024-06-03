@@ -51,6 +51,44 @@ class Database {
             return false;
         }
     }
+
+    public function delete($sql, $params = []) {
+        $stmt = mysqli_prepare($this->link, $sql);
+
+        if ($stmt) {
+            if (!empty($params)) {
+                $types = '';
+                $bindParams = [];
+                foreach ($params as $param) {
+                    if (is_int($param)) {
+                        $types .= 'i'; 
+                    } elseif (is_float($param)) {
+                        $types .= 'd'; 
+                    } elseif (is_string($param)) {
+                        $types .= 's';  
+                    } else {
+                        $types .= 's'; 
+                    }
+                    $bindParams[] = &$param;
+                }
+                array_unshift($bindParams, $stmt, $types);
+                call_user_func_array('mysqli_stmt_bind_param', $bindParams);
+            }
+
+            $result = mysqli_stmt_execute($stmt);
+
+            if ($result) {
+                return $result;
+            } else {
+                echo "Error executing statement: " . mysqli_error($this->link);
+                return false;
+            }
+        } else {
+            // Log or handle error
+            echo "Error preparing statement: " . mysqli_error($this->link);
+            return false;
+        }
+    }
 }
 
 ?>

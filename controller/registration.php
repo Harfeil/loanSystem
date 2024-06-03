@@ -5,6 +5,7 @@ session_start();
 include_once "../model/user_model.php";
 include_once "db_connector.php";
 
+
 $db = new Database();
 
 $register = new Register();
@@ -64,15 +65,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $registerUser = $register->updateStatus($_POST, $id);
     }
 
+    if(isset($_POST['status_rejected'])){
+        $id = $_POST["userId"];
+
+        $registerUser = $register->updateStatusReject($_POST, $id);
+    }
+
+    if(isset($_POST['status_blocked'])){
+        $id = $_POST['userId'];
+
+        $registerUser = $register->updateStatusBlock($_POST, $id);
+    }
+
     if(isset($_POST['submitAmount'])){
 
         $registerUser = $register->addLoan($_POST);
+        header("Location: ../view/users/loanPage.php");
     }
 
     if(isset($_POST["confirmEdit"])){
 
         $registerUser = $register->updateUser($_POST, $_FILES);
 
+        header("Location: ../view/users/profile.php");
+    }
+
+
+    if(isset($_POST["confirmEditUser"])){
+
+        $registerUser = $register->updateUserFromAdmin($_POST, $_FILES);
+
+        header("Location: ../view/admin/viewRegister.php");
+    }
+
+    
+    if(isset($_POST["rejectLoan"])){
+        $type = "Loan";
+        $transaction = $register->rejectLoan($_POST, $type);
+
+        header("Location: ../view/admin/listloan.php");
     }
 }
 ?>
