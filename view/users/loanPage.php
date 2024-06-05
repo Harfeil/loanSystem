@@ -18,10 +18,7 @@
 
         <div class = "loanTableContainer">
             <?php
-            
-                $message = $_SESSION["loan_error_message"];
-                echo $message;
-
+                echo $_SESSION["loan_error_message"];
             ?>
             <table class="table table-striped table-hover">
                 <thead>
@@ -133,7 +130,7 @@
 
                             $month_options = $allLoan->getMonthOption();
 
-                            foreach ($_SESSION["my_months"] as $option) {
+                            foreach ($month_options as $option) {
                                 echo '<option value="' . $option . '">' . $option . ' Months</option>';
                             }
 
@@ -156,6 +153,7 @@
 
         loanBtn.addEventListener("click", function() {
             popupForm.style.display = "block";
+            console.log("asdasd");
         });
 
         closeImage.addEventListener("click", function() {

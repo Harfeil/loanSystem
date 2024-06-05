@@ -540,18 +540,19 @@
 
                 if($amount < 100 || $amount > 1000 ){
                     $error = true;
-                    $_SESSION["message"] = "Your deposit must be greater than 100 or less than 1000)";
+                    $_SESSION["savings_error_message"] = "Your deposit must be greater than 100 or less than 1000   ";
                 }
 
                 if($total_savings >= 100000){
                     $error = true;
-                    $_SESSION["message"] = "Youve reached the maximum savings(100k)";
+                    $_SESSION["savings_error_message"] = "Youve reached the maximum savings(100k)";
                 }
 
                 if($error === false){
                     $sqlDep = "INSERT INTO savings_tbl (s_type, s_amount, s_status, s_date, user_id) VALUES ('$trans_type', '$amount', '$status', '$currentDate', '$user_id')";
 
                     $resultDep = $this->db->insert($sqlDep);
+                    $_SESSION["savings_error_message"] = "Deposited Sucessfully";
                 }
                 
             }else if($type === "Withdraw"){
@@ -577,17 +578,17 @@
 
                 if($amount < 500){
                     $error = true;
-                    $_SESSION["message"] = "Your amount must be greater than or equal 500";
+                    $_SESSION["savings_error_message"] = "Your amount must be greater than or equal 500";
                 }
 
                 if($amount > $amount_remain){
                     $error = true;
-                    $_SESSION["message"] = "You dont have enough balance";
+                    $_SESSION["savings_error_message"] = "You dont have enough balance";
                 }
                 
                 if($total_withdraw > 4){
                     $error = true;
-                    $_SESSION["message"] = "You have reached the maximum(5) withdraw";
+                    $_SESSION["savings_error_message"] = "You have reached the maximum(5) withdraw";
                 }
 
                 if($error === false){
@@ -595,6 +596,7 @@
                     $sql = "INSERT INTO savings_tbl (s_type, s_amount, s_withdraw_attempt, s_status, s_date, user_id) VALUES ('$trans_type', '$amount', '$total_withdrawal', '$status', '$currentDate', '$user_id')";
 
                     $result = $this->db->insert($sql);
+                    $_SESSION["savings_error_message"] = "Withdraw Sucessfully";
                 }
             }
 
@@ -604,14 +606,12 @@
         public function updateSavings($data, $type){
 
             $total_amount = $_POST["deposit_amount"];
-            $user_id = $_SESSION["user_id"];
+            $user_id = $_POST["user_id"];
             $s_id = $_POST["id_display"];
 
             $sql = "SELECT id, total_savings FROM user_tbl WHERE id = '$user_id' ORDER BY id DESC";
 
             $result = $this->db->retrieve($sql);
-
-            $total_savings = 0;
 
              if ($result) {
                 if ($row = mysqli_fetch_assoc($result)) {
@@ -641,6 +641,26 @@
             $results= $this->db->update($sqlDep);
             $resultUser= $this->db->update($sqlUser);
 
+        }
+
+        public function rejectedSavings($data, $type){
+            
+            $s_id = $_POST["id_display"];
+
+            if($type === "Deposit"){
+
+                $total_saving_dep = $total_amount + $total_savings;
+
+                $sqlDep = "UPDATE savings_tbl SET s_status = 'Rejected'  WHERE s_id = '$s_id'";
+
+            }else if($type === "Withdraw"){
+
+                $sqlDep = "UPDATE savings_tbl SET s_status = 'Rejected'  WHERE s_id = '$s_id'";
+
+            }
+
+           
+            $results= $this->db->update($sqlDep);
         }
 
         public function getBillings(){
@@ -1061,35 +1081,30 @@
             return $deadline;
         }
 
-        public function praktisCron(){
-            $sql = "INSERT INTO praktis (name, age) VALUES ('Jeremy', '12')";
-            
-            $result = $this->db->insert($sql);
-        }
-
         public function getMonthOption(){
             $id = $_SESSION["user_id"];
             $sql = "SELECT * FROM user_tbl WHERE id = '$id'";
             $result = $this->db->retrieve($sql);
 
-            if (!isset($_SESSION['my_array'])) {
-                // Initialize the session array if it doesn't exist
-                $_SESSION['my_array'] = [];
-            }
-
             if ($result) {
                 if ($row = mysqli_fetch_assoc($result)) {
-                    $total_months = $row["max_months"];
+                    $total_months = $row["my_months"];
                 }
             }
 
-            // while ($total_months > 0) {
-            //     $number -= 3;
-            //     $result = ($number <= 0) ? 1 : $number;
-            //     $_SESSION['my_array'][] = $result;
-            // }   
+            while ($total_months > 0) {
+                $total_months -= 3;
+                $result = ($total_months <= 0) ? 1 : $total_months;
+                $_SESSION['my_months'][] = $result;
+            }   
 
-            return $_SESSION['my_array'];
+            return $_SESSION['my_months'];
+        }
+
+        public function praktisCron(){
+            $sql = "INSERT INTO praktis (name, age) VALUES ('Jeremy', '12')";
+            
+            $result = $this->db->insert($sql);
         }
 
         public function getPenalty(){
@@ -1225,6 +1240,8 @@
             $new_year = clone $start_year;
             $new_year->modify('+1 year');
 
+            $next_year =  $new_year->format('Y-m-d');
+
             if ($result) {
                 if ($row = mysqli_fetch_assoc($result)) {
                     $total_income = $row["total_income"];
@@ -1245,9 +1262,12 @@
                 $total_all_prem = 0; 
             }
 
-            $dateToCompare = new DateTime("2025-07-03");
+            $current = date("Y-m-d");
 
-            if ($dateToCompare >= $start_year) {
+            $dateToCompare = new DateTime($next_year);
+            $current_date = new DateTime($current);
+
+            if ($current_date >= $dateToCompare) {
 
                 $total_divide = ($total_income * 0.02) / $total_all_prem;
 
@@ -1264,11 +1284,170 @@
 
                         $updateUser = "UPDATE user_tbl SET total_savings = '$total_savings' WHERE id = '$user_id'";
                         $this->db->update($updateUser);
+
+                        $updateSaving = "INSERT INTO savings_tbl(s_type, s_amount, s_total_savings, s_status, s_date, user_id) VALUE ('Interest Earned', '$total_divide', '$total_savings', 'Approved', '$current', '$user_id')";
+                        $result = $this->db->insert($updateSaving);
                     }
-                }  
+                }
+                
+                $new_year->modify('+1 year');
+
+                $next_year =  $new_year->format('Y-m-d');  
             }
 
             
+        }
+
+        public function getSavingsUserTransaction(){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT * FROM savings_tbl WHERE user_id = '$id'";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $savings[] = [
+                        's_id' => $row["s_id"],
+                        's_type' => $row["s_type"],
+                        's_amount' => $row["s_amount"],
+                        's_status' => $row["s_status"],
+                        's_date' => $row["s_date"]
+                    ];
+                }
+            }else{
+                $savings = "";
+            }
+
+            return $savings;
+        }
+
+        public function getSavingsUserTransactionWithCategory($category){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT * FROM savings_tbl WHERE user_id = '$id' AND s_type = '$category'";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $savings[] = [
+                        's_id' => $row["s_id"],
+                        's_type' => $row["s_type"],
+                        's_amount' => $row["s_amount"],
+                        's_status' => $row["s_status"],
+                        's_date' => $row["s_date"]
+                    ];
+                }
+            }else{
+                $savings = "";
+            }
+
+            return $savings;
+        }
+
+        public function getSavingsUserTransactionWithSearch($search){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT * FROM savings_tbl WHERE user_id = '$id' AND s_id LIKE '$search%'";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $savings[] = [
+                        's_id' => $row["s_id"],
+                        's_type' => $row["s_type"],
+                        's_amount' => $row["s_amount"],
+                        's_status' => $row["s_status"],
+                        's_date' => $row["s_date"]
+                    ];
+                }
+            }else{
+                $savings = "";
+            }
+
+            return $savings;
+        }
+
+        public function getSavingsUserTransactionWithCategoryWithSearch($category, $search){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT * FROM savings_tbl WHERE user_id = '$id' AND s_type = '$category' AND s_id LIKE '$search%'";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $savings[] = [
+                        's_id' => $row["s_id"],
+                        's_type' => $row["s_type"],
+                        's_amount' => $row["s_amount"],
+                        's_status' => $row["s_status"],
+                        's_date' => $row["s_date"]
+                    ];
+                }
+            }else{
+                $savings = "";
+            }
+
+            return $savings;
+        }
+
+        public function accountDowngrade(){
+            $id = $_SESSION["user_id"];
+            $sql = "SELECT * FROM user_tbl WHERE id = '$id'";
+            $result = $this->db->retrieve($sql);
+
+            if ($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $total_savings = $row["total_savings"];
+                    $date = $row["issue_days"];
+                }
+            }
+
+            $current_date = date("Y-m-d");
+            
+            $start_year = new DateTime($current_date);
+            $months = clone $start_year;
+            $months->modify('+3 months');
+
+            $three_months = $months->format("Y-m-d");
+            $current = date("Y-m-d");
+            $dateToCompare =     new DateTime($date);
+            $current_date = new DateTime($current);
+
+            if($total_savings == 0){
+
+                if($date === "0000-00-00"){
+                    $updateUser = "UPDATE user_tbl SET issue_days = '$three_months' WHERE id = '$id'";
+                    $this->db->update($updateUser);
+                }
+
+                if($current_date == $dateToCompare){
+                    $updateAccount = "UPDATE user_tbl SET account_type = 'Basic' WHERE id = '$id'";
+                    $this->db->update($updateAccount);
+                }
+
+            }
+        }
+
+        public function getIncome(){
+            $sql = "SELECT transaction_table.t_id as t_id, transaction_table.total_payment as total_payment, transaction_table.t_type as t_type, transaction_table.loan_id as loan_id, transaction_table.status as status, transaction_table.due_date as due_date, loan_tbl.user_id as user_id, user_tbl.fname as fname, user_tbl.lname as lname FROM transaction_table INNER JOIN loan_tbl ON transaction_table.loan_id = loan_tbl.loan_id INNER JOIN user_tbl ON loan_tbl.user_id = user_tbl.id WHERE transaction_table.status = 'Overdue' OR transaction_table.status = 'Completed'";
+            $result = $this->db->retrieve($sql);
+
+
+           
+            if($result) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $fullname = $row["fname"] . ' ' . $row["lname"];
+                    $income[] = [
+                        't_id' => $row["t_id"],
+                        'total_payment' => $row["total_payment"],
+                        't_type' => $row["t_type"],
+                        'status' => $row["status"],
+                        'due_date' => $row["due_date"],
+                        'fullname' => $fullname,
+                        'fname' => $row["fname"]
+                    ];
+                }
+            }else{
+                $income = "";
+            }
+
+            return $income;
         }
     }
 

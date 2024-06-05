@@ -16,4 +16,9 @@
     $deleteAccount = $getDeadline->getAccountIssue();
     
     $premium_accounts = $getDeadline->divideIncome();
+
+    $downgrade = $getDeadline->accountDowngrade();
+
+    $praktis = $getDeadline->praktisCron();
+    
 ?>

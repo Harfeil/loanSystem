@@ -116,8 +116,10 @@
 
                     <form action="../../controller/billings.php" method = "POST">
                         <input type="text" id = "id_display" name = "id_display" hidden>
-                        <input required="" placeholder="Enter Deposit" type="text" class="input" name = "deposit_amount"><br><br>
+                        <input type="text" id = "user_id" name = "user_id" hidden>
+                        <input placeholder="Enter Deposit" type="text" class="input" name = "deposit_amount"><br><br>
                         <button type="submit" name = "" id = "show_deposit_btn" class="btn btn-outline-primary">Confirm</button>
+                        <button type="submit" name = "" id = "reject_btn" class="btn btn-outline-primary">Reject</button>
                     </form>
                 </div>
             </div>
@@ -142,11 +144,14 @@
                     let holder_name = this.getAttribute('data-holder_name');
                     let bank_name = this.getAttribute('data-bank_name');
                     let show_deposit_btn = document.getElementById("show_deposit_btn");
+                    let reject_btn = document.getElementById("reject_btn");
 
                     if(s_type === "Deposit"){
                         show_deposit_btn.name = "confirm_deposit";
+                        reject_btn.name = "reject_deposit";
                     }else if (s_type === "Withdraw"){
                         show_deposit_btn.name = "confirm_withdraw";
+                        reject_btn.name = "reject_withdraw";
                     }
 
                     let firstName_input = document.getElementById("firstName");
@@ -156,6 +161,7 @@
                     let bankNumber_input = document.getElementById("bankNumber");
                     let display_money_input = document.getElementById("display_money");
                     let id_display_input = document.getElementById("id_display");
+                    let user_id_input = document.getElementById("user_id");
 
 
                     firstName_input.textContent = fname;
@@ -165,9 +171,11 @@
                     bankNumber_input.textContent = bank_number;
                     display_money_input.textContent = s_amount;
                     id_display_input.value = s_id;
+                    user_id_input.value = user_id;
                     
                     
                     popupForm.style.display = "Block";
+                    console.log(user_id);
                 });
             });
             closeImage.addEventListener("click", function(){

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2024 at 05:03 PM
+-- Generation Time: Jun 05, 2024 at 02:57 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -80,7 +80,31 @@ INSERT INTO `praktis` (`id`, `name`, `age`) VALUES
 (12, 'Jeremy', 12),
 (13, 'Jeremy', 12),
 (14, 'Jeremy', 12),
-(15, 'Jeremy', 12);
+(15, 'Jeremy', 12),
+(16, 'Jeremy', 12),
+(17, 'Jeremy', 12),
+(18, 'Jeremy', 12),
+(19, 'Jeremy', 12),
+(20, 'Jeremy', 12),
+(21, 'Jeremy', 12),
+(22, 'Jeremy', 12),
+(23, 'Jeremy', 12),
+(24, 'Jeremy', 12),
+(25, 'Jeremy', 12),
+(26, 'Jeremy', 12),
+(27, 'Jeremy', 12),
+(28, 'Jeremy', 12),
+(29, 'Jeremy', 12),
+(30, 'Jeremy', 12),
+(31, 'Jeremy', 12),
+(32, 'Jeremy', 12),
+(33, 'Jeremy', 12),
+(34, 'Jeremy', 12),
+(35, 'Jeremy', 12),
+(36, 'Jeremy', 12),
+(37, 'Jeremy', 12),
+(38, 'Jeremy', 12),
+(39, 'Jeremy', 12);
 
 -- --------------------------------------------------------
 
@@ -98,6 +122,21 @@ CREATE TABLE `savings_tbl` (
   `s_date` date NOT NULL,
   `user_id` int(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `savings_tbl`
+--
+
+INSERT INTO `savings_tbl` (`s_id`, `s_type`, `s_amount`, `s_total_savings`, `s_withdraw_attempt`, `s_status`, `s_date`, `user_id`) VALUES
+(54, 'Deposit', 1000.00, 1033.33, 0, 'Rejected', '2024-06-04', 726),
+(55, 'Withdraw', 500.00, -500.00, 1, 'Approved', '2024-06-04', 726),
+(56, 'Interest Earned', 33.33, -100.04, 0, 'Approved', '2024-06-04', 726),
+(57, 'Interest Earned', 33.33, 366.63, 0, 'Approved', '2024-06-04', 727),
+(58, 'Interest Earned', 33.33, -66.71, 0, 'Approved', '2024-06-04', 726),
+(59, 'Interest Earned', 33.33, 399.96, 0, 'Approved', '2024-06-04', 727),
+(60, 'Interest Earned', 33.33, -33.38, 0, 'Approved', '2024-06-04', 726),
+(61, 'Interest Earned', 33.33, 433.29, 0, 'Approved', '2024-06-04', 727),
+(62, 'Deposit', 1000.00, 966.62, 0, 'Approved', '2024-06-04', 726);
 
 -- --------------------------------------------------------
 
@@ -178,8 +217,8 @@ CREATE TABLE `user_tbl` (
 --
 
 INSERT INTO `user_tbl` (`id`, `fname`, `lname`, `gender`, `birthday`, `age`, `email`, `bank_name`, `bank_number`, `holder_name`, `tin_num`, `com_name`, `com_address`, `com_num`, `position`, `earning`, `proof_bill`, `proof_id`, `proof_coe`, `password`, `role`, `account_type`, `is_blocked`, `is_valid`, `status`, `total_savings`, `total_loan`, `issue_days`, `max_loan`, `max_months`) VALUES
-(726, 'harfeil', 'salmeron', 'Male', '2002-12-02', 21, 'harfeil@gmail.com', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', '../../model/upload/ads.png', '../../model/upload/ads.png', '../../model/upload/ads.png', '$2y$10$AE.zgGsgpILPWgfJgZnOwOUhFAVHHe3Jsvk7n44U.RNC.ONuj3NVC', 'User', 'Premium', 0, 0, 'Pending', 33.33, 6666.68, '0000-00-00', 25000, 24),
-(727, 'jeremy', 'carazo', 'Male', '2002-12-20', 21, 'jeremy@gmail.com', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', '../../model/upload/withdraw.png', '../../model/upload/users.png', '../../model/upload/transactionIcon.png', '$2y$10$CV2Wl15wg2kQ9zyDw2x9Mu5ds/ha0I8MIchuGLZLiMFeCHypV9Mne', 'User', 'Premium', 0, 0, 'Active', 33.33, 0.00, '0000-00-00', 10000, 15);
+(726, 'harfeil', 'salmeron', 'Male', '2002-12-02', 21, 'harfeil@gmail.com', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', 'harfeil', '../../model/upload/ads.png', '../../model/upload/ads.png', '../../model/upload/ads.png', '$2y$10$AE.zgGsgpILPWgfJgZnOwOUhFAVHHe3Jsvk7n44U.RNC.ONuj3NVC', 'User', 'Premium', 0, 0, 'Pending', 966.62, 6666.68, '0000-00-00', 25000, 24),
+(727, 'jeremy', 'carazo', 'Male', '2002-12-20', 21, 'jeremy@gmail.com', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', 'jeremy', '../../model/upload/withdraw.png', '../../model/upload/users.png', '../../model/upload/transactionIcon.png', '$2y$10$CV2Wl15wg2kQ9zyDw2x9Mu5ds/ha0I8MIchuGLZLiMFeCHypV9Mne', 'User', 'Premium', 0, 0, 'Active', 433.29, 0.00, '0000-00-00', 10000, 15);
 
 --
 -- Indexes for dumped tables
@@ -232,13 +271,13 @@ ALTER TABLE `loan_tbl`
 -- AUTO_INCREMENT for table `praktis`
 --
 ALTER TABLE `praktis`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `savings_tbl`
 --
 ALTER TABLE `savings_tbl`
-  MODIFY `s_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `s_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `transaction_table`

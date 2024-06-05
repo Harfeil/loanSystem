@@ -347,7 +347,7 @@ body {
   background-color: transparent;
 }
 .moneyContainer {
-  height: 350px;
+  height: 200px;
   width: 1359px;
   border-bottom: 1px solid lightgray;
 }
@@ -479,4 +479,8 @@ body {
 #rejectBtn {
   margin-top: 20px;
   width: 90px;
+}
+.savingsTableContainer {
+  height: 450px;
+  overflow-y: auto;
 }
