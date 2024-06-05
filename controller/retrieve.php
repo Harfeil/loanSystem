@@ -43,6 +43,8 @@
                         $_SESSION["user_id"] = $row["id"];
                         $_SESSION["role"] = $row["role"] ;
                         $_SESSION["account_type"] = $row["account_type"];
+                        $_SESSION["loan_error_message"] = "";
+                        $_SESSION["savings_error_message"] = "";
 
                     }else {
                         header("Location: ../view/login.php");

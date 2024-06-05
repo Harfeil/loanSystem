@@ -25,6 +25,18 @@
             $withdraw = $deposit->updateSavings($_POST, $type);
             header("Location: ../view/admin/saving_transaction.php");
         }
+
+        if(isset($_POST["reject_deposit"])){
+            $type = "Deposit";
+            $withdraw = $deposit->rejectedSavings($_POST, $type);
+            header("Location: ../view/admin/saving_transaction.php");
+        }
+
+        if(isset($_POST["reject_withdraw"])){
+            $type = "Withdraw";
+            $withdraw = $deposit->rejectedSavings($_POST, $type);
+            header("Location: ../view/admin/saving_transaction.php");
+        }
     }
 
 ?>
